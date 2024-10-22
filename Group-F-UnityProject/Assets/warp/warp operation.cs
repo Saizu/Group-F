@@ -13,6 +13,16 @@ public class warpoperation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // 1フレーム待ってからプレイヤーを取得する
+        StartCoroutine(DelayedPlayerInitialization());
+    }
+
+    // プレイヤーを1フレーム遅れて取得するコルーチン
+    private IEnumerator DelayedPlayerInitialization()
+    {
+        // 1フレーム待つ
+        yield return new WaitForEndOfFrame();
+
         // "Player" タグがついているすべてのオブジェクトを取得する
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
@@ -21,6 +31,8 @@ public class warpoperation : MonoBehaviour
         {
             player1 = players[0];  // 最初のプレイヤー
             player2 = players[1];  // 2番目のプレイヤー
+            // プレイヤーが正常に取得できた場合、デバッグメッセージを表示
+            Debug.Log("Player1 と Player2 が正常に取得されました: " + player1.name + ", " + player2.name);
         }
         else
         {
@@ -37,6 +49,20 @@ public class warpoperation : MonoBehaviour
     // ワープポイントにプレイヤーが触れた場合に呼び出される
     private void OnTriggerEnter(Collider other)
     {
+
+        // 通過したオブジェクトがプレイヤーかどうかを確認
+        if (other.gameObject == player1 || other.gameObject == player2)
+        {
+            Debug.Log("プレイヤーがワープポイントを通過しました: " + other.gameObject.name);
+        }
+        else
+        {
+            // プレイヤー以外のオブジェクトがワープポイントに触れた場合のメッセージ
+            Debug.Log("他のオブジェクトがワープポイントに触れました: " + other.gameObject.name);
+        }
+
+
+
         if (player1 != null && player2 != null)
         {
             // player1がwarp1に触れた場合
