@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Linq;
 
 namespace Complete
 {
-    public class CameraControl : MonoBehaviour
+    public class CameraControl2 : MonoBehaviour
     {
         public float m_DampTime = 0f;
         public float m_ScreenEdgeBuffer = 1f;
