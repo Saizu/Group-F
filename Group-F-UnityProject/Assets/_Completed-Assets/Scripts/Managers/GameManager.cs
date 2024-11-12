@@ -84,11 +84,7 @@ namespace Complete
             if (m_GameWinner != null)
             {
                 // If there is a game winner, restart the level.
-                // ホーム画面に遷移。
-                //
-                // NOTE: プログラマがこのスクリプトをいじることを想定しているのかな。
-                //       流動的な部分なので、本来なら別オブジェクトに切り出すべきなんだけど……。
-                SceneManager.LoadScene ("HomeScene");
+                SceneManager.LoadScene (0);
             }
             else
             {
