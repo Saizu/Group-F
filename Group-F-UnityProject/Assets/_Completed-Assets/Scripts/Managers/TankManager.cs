@@ -1,11 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Complete
-{
+namespace Complete{
     [Serializable]
-    public class TankManager
-    {
+    public class TankManager{
         // This class is to manage various settings on a tank.
         // It works with the GameManager class to control how the tanks behave
         // and whether or not players have control of their tank in the 
@@ -23,9 +21,10 @@ namespace Complete
         private TankShooting m_Shooting;                        // Reference to tank's shooting script, used to disable and enable control.
         private GameObject m_CanvasGameObject;                  // Used to disable the world space UI during the Starting and Ending phases of each round.
 
+        public delegate void OnWeaponStockChanged(int playerNumber, int currentStock); // 番号と砲弾の所持数を通知する
+        public event OnWeaponStockChanged AmmoStockChanged;   // 砲弾所持数が変化したときのイベント
 
-        public void Setup ()
-        {
+        public void Setup (){
             // Get references to the components.
             m_Movement = m_Instance.GetComponent<TankMovement> ();
             m_Shooting = m_Instance.GetComponent<TankShooting> ();
@@ -42,17 +41,19 @@ namespace Complete
             MeshRenderer[] renderers = m_Instance.GetComponentsInChildren<MeshRenderer> ();
 
             // Go through all the renderers...
-            for (int i = 0; i < renderers.Length; i++)
-            {
+            for (int i = 0; i < renderers.Length; i++){
                 // ... set their material color to the color specific to this tank.
                 renderers[i].material.color = m_PlayerColor;
             }
+            m_Shooting.OnShellStockChanged += HandleShellStockChanged;
         }
 
+        private void HandleShellStockChanged(int currentStock){
+            AmmoStockChanged?.Invoke(m_PlayerNumber, currentStock); //プレイヤー番号と砲弾の所持数の通知を行う
+        }
 
         // Used during the phases of the game where the player shouldn't be able to control their tank.
-        public void DisableControl ()
-        {
+        public void DisableControl (){
             m_Movement.enabled = false;
             m_Shooting.enabled = false;
 
@@ -61,8 +62,7 @@ namespace Complete
 
 
         // Used during the phases of the game where the player should be able to control their tank.
-        public void EnableControl ()
-        {
+        public void EnableControl (){
             m_Movement.enabled = true;
             m_Shooting.enabled = true;
 
@@ -71,8 +71,7 @@ namespace Complete
 
 
         // Used at the start of each round to put the tank into it's default state.
-        public void Reset ()
-        {
+        public void Reset (){
             m_Instance.transform.position = m_SpawnPoint.position;
             m_Instance.transform.rotation = m_SpawnPoint.rotation;
 

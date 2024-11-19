@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 
-namespace Complete
-{
-    public class TankMovement : MonoBehaviour
-    {
+namespace Complete{
+    public class TankMovement : MonoBehaviour{
         public int m_PlayerNumber = 1;              // Used to identify which tank belongs to which player.  This is set by this tank's manager.
         public float m_Speed = 12f;                 // How fast the tank moves forward and back.
         public float m_TurnSpeed = 180f;            // How fast the tank turns in degrees per second.
@@ -12,6 +10,10 @@ namespace Complete
         public AudioClip m_EngineDriving;           // Audio to play when the tank is moving.
 		public float m_PitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
 
+        private float m_TurretTurnInputValue;  //砲塔を回転するキーの入力量
+        public float m_TurretTurnSpeed = 90f;  //砲塔の回転速度
+        private string m_TurretAxisName;  //砲塔を回転するキーのName
+        public GameObject m_Turret;   //砲塔のゲームオブジェクトの参照
         private string m_MovementAxisName;          // The name of the input axis for moving forward and back.
         private string m_TurnAxisName;              // The name of the input axis for turning.
         private Rigidbody m_Rigidbody;              // Reference used to move the tank.
@@ -20,14 +22,12 @@ namespace Complete
         private float m_OriginalPitch;              // The pitch of the audio source at the start of the scene.
         private ParticleSystem[] m_particleSystems; // References to all the particles systems used by the Tanks
 
-        private void Awake ()
-        {
+        private void Awake (){
             m_Rigidbody = GetComponent<Rigidbody> ();
         }
 
 
-        private void OnEnable ()
-        {
+        private void OnEnable (){
             // When the tank is turned on, make sure it's not kinematic.
             m_Rigidbody.isKinematic = false;
 
@@ -46,8 +46,7 @@ namespace Complete
         }
 
 
-        private void OnDisable ()
-        {
+        private void OnDisable (){
             // When the tank is turned off, set it to kinematic so it stops moving.
             m_Rigidbody.isKinematic = true;
 
@@ -59,46 +58,43 @@ namespace Complete
         }
 
 
-        private void Start ()
-        {
+        private void Start (){
             // The axes names are based on player number.
             m_MovementAxisName = "Vertical" + m_PlayerNumber;
             m_TurnAxisName = "Horizontal" + m_PlayerNumber;
 
+            //キーのNameを代入
+            m_TurretAxisName = "TurretHorizontal" + m_PlayerNumber;
             // Store the original pitch of the audio source.
             m_OriginalPitch = m_MovementAudio.pitch;
         }
 
 
-        private void Update ()
-        {
+        private void Update (){
             // Store the value of both input axes.
             m_MovementInputValue = Input.GetAxis (m_MovementAxisName);
             m_TurnInputValue = Input.GetAxis (m_TurnAxisName);
-
+            
+            //砲塔を回転するキーの入力量を取得
+            m_TurretTurnInputValue = Input.GetAxis(m_TurretAxisName);
             EngineAudio ();
         }
 
 
-        private void EngineAudio ()
-        {
+        private void EngineAudio (){
             // If there is no input (the tank is stationary)...
-            if (Mathf.Abs (m_MovementInputValue) < 0.1f && Mathf.Abs (m_TurnInputValue) < 0.1f)
-            {
+            if (Mathf.Abs (m_MovementInputValue) < 0.1f && Mathf.Abs (m_TurnInputValue) < 0.1f){
                 // ... and if the audio source is currently playing the driving clip...
-                if (m_MovementAudio.clip == m_EngineDriving)
-                {
+                if (m_MovementAudio.clip == m_EngineDriving){
                     // ... change the clip to idling and play it.
                     m_MovementAudio.clip = m_EngineIdling;
                     m_MovementAudio.pitch = Random.Range (m_OriginalPitch - m_PitchRange, m_OriginalPitch + m_PitchRange);
                     m_MovementAudio.Play ();
                 }
             }
-            else
-            {
+            else{
                 // Otherwise if the tank is moving and if the idling clip is currently playing...
-                if (m_MovementAudio.clip == m_EngineIdling)
-                {
+                if (m_MovementAudio.clip == m_EngineIdling){
                     // ... change the clip to driving and play.
                     m_MovementAudio.clip = m_EngineDriving;
                     m_MovementAudio.pitch = Random.Range(m_OriginalPitch - m_PitchRange, m_OriginalPitch + m_PitchRange);
@@ -108,16 +104,16 @@ namespace Complete
         }
 
 
-        private void FixedUpdate ()
-        {
+        private void FixedUpdate (){
             // Adjust the rigidbodies position and orientation in FixedUpdate.
             Move ();
             Turn ();
+            //TurretTurnメソッドを呼ぶ
+            TurretTurn();
         }
 
 
-        private void Move ()
-        {
+        private void Move (){
             // Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
             Vector3 movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime;
 
@@ -126,8 +122,7 @@ namespace Complete
         }
 
 
-        private void Turn ()
-        {
+        private void Turn (){
             // Determine the number of degrees to be turned based on the input, speed and time between frames.
             float turn = m_TurnInputValue * m_TurnSpeed * Time.deltaTime;
 
@@ -136,6 +131,14 @@ namespace Complete
 
             // Apply this rotation to the rigidbody's rotation.
             m_Rigidbody.MoveRotation (m_Rigidbody.rotation * turnRotation);
+        }
+
+        private void TurretTurn (){
+            //回転する角度を決定
+            float turretTurn = m_TurretTurnInputValue * m_TurretTurnSpeed * Time.deltaTime;
+
+            Quaternion turretRotation = Quaternion.Euler(0f, turretTurn, 0f);
+            m_Turret.transform.rotation *= turretRotation;
         }
     }
 }

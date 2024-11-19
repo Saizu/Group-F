@@ -2,11 +2,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
-namespace Complete
-{
-    public class GameManager : MonoBehaviour
-    {
+namespace Complete{
+    public class GameManager : MonoBehaviour{
         public int m_NumRoundsToWin = 5;            // The number of rounds a single player has to win to win the game.
         public float m_StartDelay = 3f;             // The delay between the start of RoundStarting and RoundPlaying phases.
         public float m_EndDelay = 3f;               // The delay between the end of RoundPlaying and RoundEnding phases.
@@ -14,7 +13,6 @@ namespace Complete
         public Text m_MessageText;                  // Reference to the overlay Text to display winning text, etc.
         public GameObject m_TankPrefab;             // Reference to the prefab the players will control.
         public TankManager[] m_Tanks;               // A collection of managers for enabling and disabling different aspects of the tanks.
-
         
         private int m_RoundNumber;                  // Which round the game is currently on.
         private WaitForSeconds m_StartWait;         // Used to have a delay whilst the round starts.
@@ -22,9 +20,16 @@ namespace Complete
         private TankManager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won.
         private TankManager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won.
 
+        public enum GameState{
+            //ゲームの開始処理中、ゲームのプレイ中、ゲームの終了処理中
+            RoundStarting,RoundPlaying,RoundEnding
+        }
 
-        private void Start()
-        {
+        public GameState CurrentGameState { get; private set; } //現在のゲームの状態を保持する変数
+        public delegate void OnGameStateChanged(GameState newGameState); //新しい状態の通知を行うイベント
+        internal Action<Complete.GameManager.GameState> GameStateChanged;
+
+        private void Start(){
             // Create the delays so they only have to be made once.
             m_StartWait = new WaitForSeconds (m_StartDelay);
             m_EndWait = new WaitForSeconds (m_EndDelay);
@@ -36,12 +41,9 @@ namespace Complete
             StartCoroutine (GameLoop ());
         }
 
-
-        private void SpawnAllTanks()
-        {
+        private void SpawnAllTanks(){
             // For all the tanks...
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
+            for (int i = 0; i < m_Tanks.Length; i++){
                 // ... create them, set their player number and references needed for control.
                 m_Tanks[i].m_Instance =
                     Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
@@ -50,15 +52,12 @@ namespace Complete
             }
         }
 
-
-        private void SetCameraTargets()
-        {
+        private void SetCameraTargets(){
             // Create a collection of transforms the same size as the number of tanks.
             Transform[] targets = new Transform[m_Tanks.Length];
 
             // For each of these transforms...
-            for (int i = 0; i < targets.Length; i++)
-            {
+            for (int i = 0; i < targets.Length; i++){
                 // ... set it to the appropriate tank transform.
                 targets[i] = m_Tanks[i].m_Instance.transform;
             }
@@ -67,10 +66,16 @@ namespace Complete
             m_CameraControl.m_Targets = targets;
         }
 
+        private void SetGameState(GameState newState){ //ゲームの状態を更新
+            if (CurrentGameState == newState)
+                return;
+
+            CurrentGameState = newState;
+            GameStateChanged?.Invoke(newState);
+        }
 
         // This is called from start and will run each phase of the game one after another.
-        private IEnumerator GameLoop ()
-        {
+        private IEnumerator GameLoop (){
             // Start off by running the 'RoundStarting' coroutine but don't return until it's finished.
             yield return StartCoroutine (RoundStarting ());
 
@@ -81,13 +86,11 @@ namespace Complete
             yield return StartCoroutine (RoundEnding());
 
             // This code is not run until 'RoundEnding' has finished.  At which point, check if a game winner has been found.
-            if (m_GameWinner != null)
-            {
+            if (m_GameWinner != null){
                 // If there is a game winner, restart the level.
                 SceneManager.LoadScene (0);
             }
-            else
-            {
+            else{
                 // If there isn't a winner yet, restart this coroutine so the loop continues.
                 // Note that this coroutine doesn't yield.  This means that the current version of the GameLoop will end.
                 StartCoroutine (GameLoop ());
@@ -95,8 +98,8 @@ namespace Complete
         }
 
 
-        private IEnumerator RoundStarting ()
-        {
+        private IEnumerator RoundStarting (){
+            SetGameState(GameState.RoundStarting);
             // As soon as the round starts reset the tanks and make sure they can't move.
             ResetAllTanks ();
             DisableTankControl ();
@@ -112,9 +115,8 @@ namespace Complete
             yield return m_StartWait;
         }
 
-
-        private IEnumerator RoundPlaying ()
-        {
+        private IEnumerator RoundPlaying (){
+            SetGameState(GameState.RoundPlaying);
             // As soon as the round begins playing let the players control the tanks.
             EnableTankControl ();
 
@@ -122,16 +124,14 @@ namespace Complete
             m_MessageText.text = string.Empty;
 
             // While there is not one tank left...
-            while (!OneTankLeft())
-            {
+            while (!OneTankLeft()){
                 // ... return on the next frame.
                 yield return null;
             }
         }
 
-
-        private IEnumerator RoundEnding ()
-        {
+        private IEnumerator RoundEnding (){
+            SetGameState(GameState.RoundEnding);
             // Stop tanks from moving.
             DisableTankControl ();
 
@@ -151,21 +151,18 @@ namespace Complete
             // Get a message based on the scores and whether or not there is a game winner and display it.
             string message = EndMessage ();
             m_MessageText.text = message;
-
             // Wait for the specified length of time until yielding control back to the game loop.
             yield return m_EndWait;
         }
 
 
         // This is used to check if there is one or fewer tanks remaining and thus the round should end.
-        private bool OneTankLeft()
-        {
+        private bool OneTankLeft(){
             // Start the count of tanks left at zero.
             int numTanksLeft = 0;
 
             // Go through all the tanks...
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
+            for (int i = 0; i < m_Tanks.Length; i++){
                 // ... and if they are active, increment the counter.
                 if (m_Tanks[i].m_Instance.activeSelf)
                     numTanksLeft++;
@@ -178,11 +175,9 @@ namespace Complete
         
         // This function is to find out if there is a winner of the round.
         // This function is called with the assumption that 1 or fewer tanks are currently active.
-        private TankManager GetRoundWinner()
-        {
+        private TankManager GetRoundWinner(){
             // Go through all the tanks...
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
+            for (int i = 0; i < m_Tanks.Length; i++){
                 // ... and if one of them is active, it is the winner so return it.
                 if (m_Tanks[i].m_Instance.activeSelf)
                     return m_Tanks[i];
@@ -194,11 +189,9 @@ namespace Complete
 
 
         // This function is to find out if there is a winner of the game.
-        private TankManager GetGameWinner()
-        {
+        private TankManager GetGameWinner(){
             // Go through all the tanks...
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
+            for (int i = 0; i < m_Tanks.Length; i++){
                 // ... and if one of them has enough rounds to win the game, return it.
                 if (m_Tanks[i].m_Wins == m_NumRoundsToWin)
                     return m_Tanks[i];
@@ -210,8 +203,7 @@ namespace Complete
 
 
         // Returns a string message to display at the end of each round.
-        private string EndMessage()
-        {
+        private string EndMessage(){
             // By default when a round ends there are no winners so the default end message is a draw.
             string message = "DRAW!";
 
@@ -223,8 +215,7 @@ namespace Complete
             message += "\n\n\n\n";
 
             // Go through all the tanks and add each of their scores to the message.
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
+            for (int i = 0; i < m_Tanks.Length; i++){
                 message += m_Tanks[i].m_ColoredPlayerText + ": " + m_Tanks[i].m_Wins + " WINS\n";
             }
 
@@ -237,28 +228,22 @@ namespace Complete
 
 
         // This function is used to turn all the tanks back on and reset their positions and properties.
-        private void ResetAllTanks()
-        {
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
+        private void ResetAllTanks(){
+            for (int i = 0; i < m_Tanks.Length; i++){
                 m_Tanks[i].Reset();
             }
         }
 
 
-        private void EnableTankControl()
-        {
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
+        private void EnableTankControl(){
+            for (int i = 0; i < m_Tanks.Length; i++){
                 m_Tanks[i].EnableControl();
             }
         }
 
 
-        private void DisableTankControl()
-        {
-            for (int i = 0; i < m_Tanks.Length; i++)
-            {
+        private void DisableTankControl(){
+            for (int i = 0; i < m_Tanks.Length; i++){
                 m_Tanks[i].DisableControl();
             }
         }

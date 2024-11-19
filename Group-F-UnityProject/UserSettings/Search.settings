@@ -3,7 +3,7 @@ refreshSearchWindowsInPlayMode = false
 pickerAdvancedUI = false
 fetchPreview = true
 defaultFlags = 0
-keepOpen = true
+keepOpen = false
 queryFolder = "Assets"
 onBoardingDoNotAskAgain = true
 showPackageIndexes = false
@@ -36,17 +36,17 @@ providers = {
 		priority = 90
 		defaultAction = null
 	}
+	profilermarkers = {
+		active = false
+		priority = 100
+		defaultAction = null
+	}
 	store = {
 		active = false
 		priority = 100
 		defaultAction = null
 	}
 	performance = {
-		active = false
-		priority = 100
-		defaultAction = null
-	}
-	profilermarkers = {
 		active = false
 		priority = 100
 		defaultAction = null
