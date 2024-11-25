@@ -16,7 +16,6 @@ public class CameraControl : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("fa");
         m_Camera = GetComponentInChildren<Camera>();
     }
 
