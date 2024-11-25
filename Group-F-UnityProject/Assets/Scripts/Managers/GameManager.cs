@@ -23,13 +23,15 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        m_StartWait = new WaitForSeconds(m_StartDelay);
-        m_EndWait = new WaitForSeconds(m_EndDelay);
+        //     Debug.Log("aaa");
 
-        SpawnAllTanks();
-        SetCameraTargets();
+        // m_StartWait = new WaitForSeconds(m_StartDelay);
+        // m_EndWait = new WaitForSeconds(m_EndDelay);
 
-        StartCoroutine(GameLoop());
+        // SpawnAllTanks();
+        // SetCameraTargets();
+
+        // StartCoroutine(GameLoop());
     }
 
 
