@@ -12,6 +12,11 @@ namespace Complete
         public AudioClip m_EngineDriving;           // Audio to play when the tank is moving.
 		public float m_PitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
 
+        private float m_TurretTurnInputValue;  //砲塔を回転するキーの入力量
+        public float m_TurretTurnSpeed = 90f;  //砲塔の回転速度
+        private string m_TurretAxisName;  //砲塔を回転するキーのName
+        public GameObject m_Turret;   //砲塔のゲームオブジェクトの参照
+
         private string m_MovementAxisName;          // The name of the input axis for moving forward and back.
         private string m_TurnAxisName;              // The name of the input axis for turning.
         private Rigidbody m_Rigidbody;              // Reference used to move the tank.
@@ -65,6 +70,8 @@ namespace Complete
             m_MovementAxisName = "Vertical" + m_PlayerNumber;
             m_TurnAxisName = "Horizontal" + m_PlayerNumber;
 
+            //キーのNameを代入
+            m_TurretAxisName = "TurretHorizontal" + m_PlayerNumber;
             // Store the original pitch of the audio source.
             m_OriginalPitch = m_MovementAudio.pitch;
         }
@@ -76,6 +83,8 @@ namespace Complete
             m_MovementInputValue = Input.GetAxis (m_MovementAxisName);
             m_TurnInputValue = Input.GetAxis (m_TurnAxisName);
 
+            //砲塔を回転するキーの入力量を取得
+            m_TurretTurnInputValue = Input.GetAxis(m_TurretAxisName);
             EngineAudio ();
         }
 
@@ -113,6 +122,8 @@ namespace Complete
             // Adjust the rigidbodies position and orientation in FixedUpdate.
             Move ();
             Turn ();
+            //TurretTurnメソッドを呼ぶ
+            TurretTurn();
         }
 
 
@@ -136,6 +147,14 @@ namespace Complete
 
             // Apply this rotation to the rigidbody's rotation.
             m_Rigidbody.MoveRotation (m_Rigidbody.rotation * turnRotation);
+        }
+
+        private void TurretTurn (){
+            //回転する角度を決定
+            float turretTurn = m_TurretTurnInputValue * m_TurretTurnSpeed * Time.deltaTime;
+
+            Quaternion turretRotation = Quaternion.Euler(0f, turretTurn, 0f);
+            m_Turret.transform.rotation *= turretRotation;
         }
     }
 }
