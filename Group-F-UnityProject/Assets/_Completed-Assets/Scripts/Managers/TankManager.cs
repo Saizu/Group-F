@@ -17,7 +17,7 @@ namespace Complete
         [HideInInspector] public int m_PlayerNumber;            // This specifies which player this the manager for.
         [HideInInspector] public string m_ColoredPlayerText;    // A string that represents the player with their number colored to match their tank.
         [HideInInspector] public GameObject m_Instance;         // A reference to the instance of the tank when it is created.
-        [HideInInspector] public int m_Wins;                    // The number of wins this player has so far.
+        private int m_Wins;                                     // 勝利数。
         
 
         private TankMovement m_Movement;                        // Reference to tank's movement script, used to disable and enable control.
@@ -81,5 +81,21 @@ namespace Complete
             m_Instance.SetActive (false);
             m_Instance.SetActive (true);
         }
+
+
+        /// ラウンドが終了したときに呼ばれるメソッド
+        /// 
+        /// 勝利数をインクリメントしてUIに反映する。
+        public void OnRoundEnded (bool win)
+        {
+            if (win)
+            {
+                m_Wins += 1;
+            }
+            m_PlayerInfo.GetComponent<PlayerInfo>().UpdateWinCount(m_Wins);
+        }
+
+        /// 勝利数を取得するメソッド
+        public int GetWinCount () => m_Wins;
     }
 }

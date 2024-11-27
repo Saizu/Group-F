@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class PlayerInfo : MonoBehaviour
@@ -5,11 +6,18 @@ public class PlayerInfo : MonoBehaviour
     [SerializeField]
     private GameObject panel;
     [SerializeField]
+    private GameObject win;
+    [SerializeField]
     private GameObject hpBar;
 
     void Start()
     {
         UpdateHP(1.0f);
+    }
+
+    public void UpdateWinCount(int count)
+    {
+        win.GetComponent<TextMeshProUGUI>().text = "Win:" + count.ToString();
     }
 
     public void UpdateHP(float rate)

@@ -158,9 +158,11 @@ namespace Complete
             // See if there is a winner now the round is over.
             m_RoundWinner = GetRoundWinner ();
 
-            // If there is a winner, increment their score.
-            if (m_RoundWinner != null)
-                m_RoundWinner.m_Wins++;
+            // 戦車にラウンドの終了を知らせる。
+            foreach (var tank in m_Tanks)
+            {
+                tank.OnRoundEnded(tank == m_RoundWinner);
+            }
 
             // Now the winner's score has been incremented, see if someone has one the game.
             m_GameWinner = GetGameWinner ();
@@ -217,7 +219,7 @@ namespace Complete
             for (int i = 0; i < m_Tanks.Length; i++)
             {
                 // ... and if one of them has enough rounds to win the game, return it.
-                if (m_Tanks[i].m_Wins == m_NumRoundsToWin)
+                if (m_Tanks[i].GetWinCount() == m_NumRoundsToWin)
                     return m_Tanks[i];
             }
 
@@ -242,7 +244,7 @@ namespace Complete
             // Go through all the tanks and add each of their scores to the message.
             for (int i = 0; i < m_Tanks.Length; i++)
             {
-                message += m_Tanks[i].m_ColoredPlayerText + ": " + m_Tanks[i].m_Wins + " WINS\n";
+                message += m_Tanks[i].m_ColoredPlayerText + ": " + m_Tanks[i].GetWinCount() + " WINS\n";
             }
 
             // If there is a game winner, change the entire message to reflect that.
