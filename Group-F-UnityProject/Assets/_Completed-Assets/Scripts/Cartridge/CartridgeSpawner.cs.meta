@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: f57543fe6a776a4458ac072f273d6808
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_ShellCartridgePrefab: {fileID: 8811682658713598683, guid: 6c6d2965c0598184eb78116686ae40b7,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
