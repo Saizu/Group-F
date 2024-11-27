@@ -11,6 +11,7 @@ namespace Complete
         /// 
         /// WARN: インスタンス化した時に適切にセットする必要がある。
         private GameObject m_PlayerInfo = null;
+        public void SetPlayerInfo (GameObject playerInfo) => m_PlayerInfo = playerInfo;
 
         public float m_StartingHealth = 100f;               // The amount of health each tank starts with.
         public GameObject m_ExplosionPrefab;                // A prefab that will be instantiated in Awake, then used whenever the tank dies.
@@ -96,12 +97,6 @@ namespace Complete
 
             // Turn the tank off.
             gameObject.SetActive (false);
-        }
-
-
-        public void SetPlayerInfo (GameObject playerInfo)
-        {
-            m_PlayerInfo = playerInfo;
         }
     }
 }

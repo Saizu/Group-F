@@ -18,14 +18,12 @@ namespace Complete
         [HideInInspector] public string m_ColoredPlayerText;    // A string that represents the player with their number colored to match their tank.
         [HideInInspector] public GameObject m_Instance;         // A reference to the instance of the tank when it is created.
         private int m_Wins;                                     // 勝利数。
-        
+        public int GetWinCount () => m_Wins;
 
         private TankMovement m_Movement;                        // Reference to tank's movement script, used to disable and enable control.
         private TankShooting m_Shooting;                        // Reference to tank's shooting script, used to disable and enable control.
         private GameObject m_CanvasGameObject;                  // Used to disable the world space UI during the Starting and Ending phases of each round.
 
-        public delegate void OnWeaponStockChanged(int playerNumber, int currentStock); // 番号と砲弾の所持数を通知する
-        public event OnWeaponStockChanged AmmoStockChanged;   // 砲弾所持数が変化したときのイベント
         public void Setup ()
         {
             // Get references to the components.
@@ -33,7 +31,8 @@ namespace Complete
             m_Shooting = m_Instance.GetComponent<TankShooting> ();
             m_CanvasGameObject = m_Instance.GetComponentInChildren<Canvas> ().gameObject;
 
-            // TankHealthにUIを渡す。
+            // UIを渡す。
+            m_Shooting.SetPlayerInfo(m_PlayerInfo);
             m_Instance.GetComponent<TankHealth>().SetPlayerInfo(m_PlayerInfo);
 
             // Set the player numbers to be consistent across the scripts.
@@ -45,13 +44,8 @@ namespace Complete
 
             // Change color.
             m_Instance.GetComponent<TankColor> ().ChangeColor(m_PlayerColor);
-
-            m_Shooting.OnShellStockChanged += HandleShellStockChanged;
         }
 
-        private void HandleShellStockChanged(int currentStock){
-            AmmoStockChanged?.Invoke(m_PlayerNumber, currentStock); //プレイヤー番号と砲弾の所持数の通知を行う
-        }
         // Used during the phases of the game where the player shouldn't be able to control their tank.
         public void DisableControl ()
         {
@@ -94,8 +88,5 @@ namespace Complete
             }
             m_PlayerInfo.GetComponent<PlayerInfo>().UpdateWinCount(m_Wins);
         }
-
-        /// 勝利数を取得するメソッド
-        public int GetWinCount () => m_Wins;
     }
 }
