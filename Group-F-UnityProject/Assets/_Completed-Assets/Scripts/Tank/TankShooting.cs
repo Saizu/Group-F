@@ -6,6 +6,12 @@ namespace Complete
 {
     public class TankShooting : MonoBehaviour
     {
+        /// 残弾数等を表示するUI
+        /// 
+        /// WARN: インスタンス化した時に適切にセットする必要がある。
+        private GameObject m_PlayerInfo = null;
+        public void SetPlayerInfo (GameObject playerInfo) => m_PlayerInfo = playerInfo;
+
         public int m_PlayerNumber = 1;              // Used to identify the different players.
         public Rigidbody m_Shell;                   // Prefab of the shell.
         public Transform m_FireTransform;           // A child of the tank where the shells are spawned.
@@ -30,8 +36,6 @@ namespace Complete
         private bool m_IsCharging;
         private bool m_IsIncreasing = true;
 
-       //砲弾の所持数が変化したときに通知するイベント
-        public event Action<int> OnShellStockChanged;
         private void OnEnable()
         {
             // When the tank is turned on, reset the launch force and the UI
@@ -49,8 +53,7 @@ namespace Complete
             m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
             //砲弾の所持数を初期化
             m_CurrentAmmo = m_InitialAmmo;
-            // 初期状態の砲弾所持数を通知
-            OnShellStockChanged?.Invoke(m_CurrentAmmo);
+            m_PlayerInfo.GetComponent<PlayerInfo>().UpdateStock(m_CurrentAmmo);
         }
 
 
@@ -146,7 +149,9 @@ namespace Complete
 
             //砲弾の消費
             m_CurrentAmmo--;
-            OnShellStockChanged?.Invoke(m_CurrentAmmo); // 砲弾消費時にイベントを発生
+            if (m_PlayerInfo != null) {
+                m_PlayerInfo.GetComponent<PlayerInfo>().UpdateStock(m_CurrentAmmo);
+            }
         }
 
         private void OnCollisionEnter(Collision collision){
@@ -162,7 +167,9 @@ namespace Complete
         public void RefillAmmo(){
             // 最大所持数を超えないように砲弾を補充
             m_CurrentAmmo = Mathf.Min(m_CurrentAmmo + m_CartridgeRefillCount, m_MaxAmmo);
-            OnShellStockChanged?.Invoke(m_CurrentAmmo); // 補充時にイベントを発生
+            if (m_PlayerInfo != null) {
+                m_PlayerInfo.GetComponent<PlayerInfo>().UpdateStock(m_CurrentAmmo);
+            }
         }
     }
 }
