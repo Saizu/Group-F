@@ -5,7 +5,7 @@ public class MainMenuManager : MonoBehaviour
     public GameObject itemPage; // アイテム表示画面
     public GameObject gamePage; // ゲーム画面
     public GameObject mainMenuPage; // メインメニュー画面
-
+    public Camera menuCamera; // メニュー用カメラ
     // アイテムページへ移動するボタン
     public void OnItemsButtonClicked()
     {
@@ -20,6 +20,7 @@ public class MainMenuManager : MonoBehaviour
         // メインメニューを非表示にして、ゲーム画面を表示
         mainMenuPage.SetActive(false);
         gamePage.SetActive(true);
+        menuCamera.gameObject.SetActive(false);
     }
 
     // ゲームを終了するボタン
