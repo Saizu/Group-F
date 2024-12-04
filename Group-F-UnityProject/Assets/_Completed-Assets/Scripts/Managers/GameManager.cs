@@ -97,8 +97,8 @@ namespace Complete
             // This code is not run until 'RoundEnding' has finished.  At which point, check if a game winner has been found.
             if (m_GameWinner != null)
             {
-                // If there is a game winner, restart the level.
-                SceneManager.LoadScene (0);
+                // ホーム画面に遷移。
+                SceneManager.LoadScene ("HomeScene");
             }
             else
             {
