@@ -8,7 +8,8 @@ public class ItemManager : MonoBehaviour
     public GameObject mainMenuPage; // メインメニューのページ
 
     private string currentUser; // 現在のユーザー名
-
+    public GameObject addHP;
+    public GameObject addSpeed;
     void Start()
     {
         AppState.CurrentPage = "Item";
@@ -26,7 +27,9 @@ public class ItemManager : MonoBehaviour
     {
         int item1 = PlayerPrefs.GetInt(currentUser + "_item1", 0);
         if (item1 > 0)
-        {
+        {   
+            GameObject spawnedObject = Instantiate(addHP, Vector3.zero, Quaternion.identity);
+            Debug.Log("オブジェクトを生成しました: " + spawnedObject.name);
             PlayerPrefs.SetInt(currentUser + "_item1", item1 - 1);
             PlayerPrefs.Save();
             UpdateItemDisplay();
@@ -43,6 +46,8 @@ public class ItemManager : MonoBehaviour
         int item2 = PlayerPrefs.GetInt(currentUser + "_item2", 0);
         if (item2 > 0)
         {
+            GameObject spawnedObject = Instantiate(addSpeed, Vector3.zero, Quaternion.identity);
+            Debug.Log("オブジェクトを生成しました: " + spawnedObject.name);
             PlayerPrefs.SetInt(currentUser + "_item2", item2 - 1);
             PlayerPrefs.Save();
             UpdateItemDisplay();
@@ -61,7 +66,7 @@ public class ItemManager : MonoBehaviour
 
         if (item1Text != null)
         {
-            item1Text.text = "Item 1: " + item1;
+            item1Text.text = "Add HP Item: " + item1;
         }
         else
         {
@@ -70,7 +75,7 @@ public class ItemManager : MonoBehaviour
 
         if (item2Text != null)
         {
-            item2Text.text = "Item 2: " + item2;
+            item2Text.text = "Speed up Item: " + item2;
         }
         else
         {

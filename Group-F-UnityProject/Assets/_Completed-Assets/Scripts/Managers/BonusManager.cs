@@ -31,8 +31,8 @@ public class BonusManager : MonoBehaviour
         Debug.Log($"After bonus: Item1 = {item1 + 1}, Item2 = {item2 + 1}");
 
         // アイテム数を表示
-        item1Text.text = "Get Item1! Item 1: " + (item1 + 1);
-        item2Text.text = "Get Item2! Item 2: " + (item2 + 1);
+        item1Text.text = "Get Item1! Add HP Item: " + (item1 + 1);
+        item2Text.text = "Get Item2! Add Speed Item: " + (item2 + 1);
 
         // ボーナスメッセージ
         bonusText.text = "You received your login bonus!";
