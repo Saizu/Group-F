@@ -8,6 +8,10 @@ public class BonusManager : MonoBehaviour
     public TMP_Text item2Text; // アイテム2のテキスト
     public GameObject mainMenuPage; // メインメニュー
 
+    void Start(){
+        AppState.CurrentPage = "Bonus";
+        Debug.Log($"Current Page: {AppState.CurrentPage}");
+    }
     // ログインボーナス画面
     public void OnBonusPageShown()
     {

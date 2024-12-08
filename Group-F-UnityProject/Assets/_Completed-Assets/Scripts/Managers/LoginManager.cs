@@ -15,6 +15,8 @@ public class LoginManager : MonoBehaviour
 
     void Start()
     {
+        AppState.CurrentPage = "Login";
+        Debug.Log($"Current Page: {AppState.CurrentPage}");
         loginPage.SetActive(true);
         bonusPage.SetActive(false);
         mainMenuPage.SetActive(false); // メインメニューは最初は非表示に

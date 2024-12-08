@@ -11,6 +11,8 @@ public class ItemManager : MonoBehaviour
 
     void Start()
     {
+        AppState.CurrentPage = "Item";
+        Debug.Log($"Current Page: {AppState.CurrentPage}");
         // 現在ログイン中のユーザーを取得
         currentUser = PlayerPrefs.GetString("currentUser", "defaultUser");
         Debug.Log("Current User: " + currentUser);

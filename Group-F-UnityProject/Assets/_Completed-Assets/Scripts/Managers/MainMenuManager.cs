@@ -6,6 +6,13 @@ public class MainMenuManager : MonoBehaviour
     public GameObject gamePage; // ゲーム画面
     public GameObject mainMenuPage; // メインメニュー画面
     public Camera menuCamera; // メニュー用カメラ
+
+    void Start(){
+        AppState.CurrentPage = "Main";
+        Debug.Log($"Current Page: {AppState.CurrentPage}");
+    }
+
+
     // アイテムページへ移動するボタン
     public void OnItemsButtonClicked()
     {

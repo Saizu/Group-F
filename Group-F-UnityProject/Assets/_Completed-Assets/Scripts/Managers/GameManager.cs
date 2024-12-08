@@ -32,6 +32,8 @@ namespace Complete
         internal Action<Complete.GameManager.GameState> GameStateChanged;
         private void Start()
         {
+            AppState.CurrentPage = "Game";
+            Debug.Log($"Current Page: {AppState.CurrentPage}");
             // Create the delays so they only have to be made once.
             m_StartWait = new WaitForSeconds (m_StartDelay);
             m_EndWait = new WaitForSeconds (m_EndDelay);
