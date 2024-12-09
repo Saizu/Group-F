@@ -3,6 +3,7 @@ using TMPro;
 
 public class LoginManager : MonoBehaviour
 {
+    [SerializeField] private ItemList itemList;
     public TMP_InputField userNameInput; // ユーザー名入力フィールド
     public TMP_InputField passwordInput; // パスワード入力フィールド
     public TMP_Text errorMessageText; // エラーメッセージ表示用
@@ -85,8 +86,8 @@ public class LoginManager : MonoBehaviour
         {
             PlayerPrefs.SetString(userName + "_password", password);
             PlayerPrefs.SetString(userName + "_lastLogin", "");
-            PlayerPrefs.SetInt(userName + "_item1", 3);
-            PlayerPrefs.SetInt(userName + "_item2", 3);
+            PlayerPrefs.SetInt(userName + "_" + itemList.item1, 3);
+            PlayerPrefs.SetInt(userName + "_" + itemList.item2, 3);
             PlayerPrefs.Save();
 
             errorMessageText.text = "Account created successfully. Please log in.";
