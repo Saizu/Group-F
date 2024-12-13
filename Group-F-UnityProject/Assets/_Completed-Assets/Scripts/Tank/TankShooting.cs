@@ -29,19 +29,14 @@ namespace Complete
         public float m_MaxLaunchForce = 30f;        // The force given to the shell if the fire button is held for the max charge time.
         public float m_MaxChargeTime = 0.75f;       // How long the shell can charge for before it is fired at max force.
 
-        public int m_InitialAmmo = 10; //ゲーム開始時の砲弾の所持数
-        private int m_CurrentAmmo; //現在の砲弾の所持数
-        public int m_MaxAmmo = 50; //所持可能な砲弾の最大数
-        public int m_CartridgeRefillCount = 10; //砲弾カートリッジを取得したときに補充する数
-
         private string m_FireButton;                // The input axis that is used for launching shells.
         private string m_PlaceMineKey;
         private float m_CurrentLaunchForce;         // The force that will be given to the shell when the fire button is released.
         private float m_ChargeSpeed;                // How fast the launch force increases, based on the max charge time.
         private bool m_Fired;                       // Whether or not the shell has been launched with this button press.
+
         public event Action<string, int> OnWeaponStockChanged;
         public event Action OnMinePlaced;
-
 
         private bool m_IsCharging;
         private bool m_IsIncreasing = true;
@@ -70,16 +65,15 @@ namespace Complete
             NotifyWeaponStockChanged("Shell");
             NotifyWeaponStockChanged("Mine");
 
-            //砲弾の所持数を初期化
-            m_CurrentAmmo = m_InitialAmmo;
-            m_PlayerInfo.GetComponent<PlayerInfo>().UpdateStock(m_CurrentAmmo);
+            m_ShellStockData.InitializeCount();
+            m_MineStockData.InitializeCount();
         }
 
 
         private void Update()
         {
             //砲弾の数がゼロ以下でないことをチェック
-            if (m_CurrentAmmo <= 0)
+            if (weaponStockDictionary["Shell"].CurrentCount <= 0)
             {
                 m_AimSlider.gameObject.SetActive(false); // スライダーを非表示
                 return;  // ゲージの更新を止める
@@ -133,7 +127,10 @@ namespace Complete
             }
             if (Input.GetButtonDown(m_PlaceMineKey))
             {
-                PlaceMine();
+                if (weaponStockDictionary["Mine"].CurrentCount > 0)
+                {
+                    PlaceMine();
+                }
             }
         }
 
@@ -209,7 +206,10 @@ namespace Complete
         {
             if (weaponStockDictionary["Mine"].CurrentCount > 0)
             {
-                Instantiate(m_MinePrefab, transform.position - transform.forward * 2, Quaternion.identity);
+                Vector3 placePosition = transform.position - transform.forward * 2;
+                placePosition.y = 0; // 地面の高さに合わせる
+                Instantiate(m_MinePrefab, placePosition, Quaternion.identity);
+
                 weaponStockDictionary["Mine"].Decrement();
                 NotifyWeaponStockChanged("Mine");
                 OnMinePlaced?.Invoke(); // 地雷設置イベントを発火

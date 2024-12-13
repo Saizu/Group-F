@@ -6,17 +6,14 @@ namespace Complete
     public class CartridgeSpawner : MonoBehaviour
     {
         [SerializeField] private CartridgeData shellCartridgeData; // ShellCartridgeプレハブを割り当てる変数
-        [SerializeField] private CartridgeData mineCartridgeData;
-
-        public Vector3 spawnAreaMin = new Vector3(-10, 0, -10); // スポーンエリアの最小座標
-        public Vector3 spawnAreaMax = new Vector3(10, 0, 10);   // スポーンエリアの最大座標
-
+        [SerializeField] private CartridgeData mineCartridgeData; // MineCartridgeプレハブを割り当てる変数
+        public Vector3 spawnAreaMin = new Vector3(-10, 0, -10);    // スポーンエリアの最小座標
+        public Vector3 spawnAreaMax = new Vector3(10, 0, 10);      // スポーンエリアの最大座標
         private Coroutine m_SpawnRoutine; // コルーチンの参照を保持する変数
         private GameManager m_GameManager; // GameManagerオブジェクトの参照を保持
 
         private void Start()
         {
-            //StartCoroutine(SpawnRoutine());
             // GameManagerオブジェクトを探し、参照を取得
             m_GameManager = FindObjectOfType<GameManager>();
 
