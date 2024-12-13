@@ -30,6 +30,7 @@ namespace Complete
         public GameState CurrentGameState { get; private set; } //現在のゲームの状態を保持する変数
         public delegate void OnGameStateChanged(GameState newGameState); //新しい状態の通知を行うイベント
         internal Action<Complete.GameManager.GameState> GameStateChanged;
+        
         private void Start()
         {
             // Create the delays so they only have to be made once.

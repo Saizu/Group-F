@@ -16,18 +16,45 @@ namespace Complete
         {
             // GameManagerのGameStateChangedイベントを購読
             gameManager.GameStateChanged += HandleGameStateChanged;
+
+            // 各TankManagerのOnWeaponStockChangedイベントを購読
+            foreach (var tank in gameManager.m_Tanks)
+            {
+                tank.OnWeaponStockChanged += HandleWeaponStockChanged;
+            }
         }
 
         private void OnDisable()
         {
             // イベントの購読解除
             gameManager.GameStateChanged -= HandleGameStateChanged;
+
+            // 各TankManagerのOnWeaponStockChangedイベントの購読解除
+            foreach (var tank in gameManager.m_Tanks)
+            {
+                tank.OnWeaponStockChanged -= HandleWeaponStockChanged;
+            }
         }
 
         private void HandleGameStateChanged(GameManager.GameState newGameState)
         {
             // ゲームのプレイ中のみHUDを表示、それ以外は非表示
             hudCanvas.SetActive(newGameState == GameManager.GameState.RoundPlaying);
+        }
+
+        private void HandleWeaponStockChanged(int playerNumber, string weaponName, WeaponStockData stockData)
+        {
+            // 対応するPlayerStockAreaを取得
+            PlayerStockArea targetStockArea = playerNumber == 1 ? player1StockArea : player2StockArea;
+        
+            // 更新するデータを辞書形式で作成
+            var weaponStockDictionary = new Dictionary<string, WeaponStockData>
+            {
+                { weaponName, stockData }
+            };
+        
+            // PlayerStockAreaのUIを更新
+            targetStockArea.UpdatePlayerStockArea(weaponStockDictionary);
         }
     }
 }

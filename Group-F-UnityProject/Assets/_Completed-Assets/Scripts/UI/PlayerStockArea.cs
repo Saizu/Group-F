@@ -7,32 +7,50 @@ public class PlayerStockArea : MonoBehaviour
 {
     [SerializeField] private Image[] singleShells; // Shell1, Shell2, ..., Shell10
     [SerializeField] private Image[] groupedShells; // Shells10, Shells20, Shells30, Shells40
+    [SerializeField] private Image[] mines; // Mine1, Mine2, Mine3
 
-    public void UpdatePlayerStockArea(int stockCount)
+    public void UpdatePlayerStockArea(Dictionary<string, WeaponStockData> weaponStockDictionary)
     {
-        for (int i = 0; i < singleShells.Length; i++)
+        if (weaponStockDictionary.TryGetValue("Shell", out WeaponStockData shellData))
         {
-            if (i < stockCount)
+            for (int i = 0; i < singleShells.Length; i++)
             {
-                singleShells[i].gameObject.SetActive(true);
+                if (i < shellData.CurrentCount)
+                {
+                    singleShells[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    singleShells[i].gameObject.SetActive(false);
+                }
             }
-            else
+
+            for (int i = 0; i < groupedShells.Length; i++)
             {
-                singleShells[i].gameObject.SetActive(false);
+                int groupThreshold = (i + 1) * 10;
+
+                if (shellData.CurrentCount >= groupThreshold)
+                {
+                    groupedShells[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    groupedShells[i].gameObject.SetActive(false);
+                }
             }
         }
-
-        for (int i = 0; i < groupedShells.Length; i++)
+                if (weaponStockDictionary.TryGetValue("Mine", out WeaponStockData mineData))
         {
-            int groupThreshold = (i + 1) * 10;
-
-            if (stockCount >= groupThreshold)
+            for (int i = 0; i < mines.Length; i++)
             {
-                groupedShells[i].gameObject.SetActive(true);
-            }
-            else
-            {
-                groupedShells[i].gameObject.SetActive(false);
+                if (i < mineData.CurrentCount)
+                {
+                    mines[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    mines[i].gameObject.SetActive(false);
+                }
             }
         }
     }
