@@ -10,7 +10,7 @@ namespace Complete
         /// HPを表示するUI
         /// 
         /// WARN: インスタンス化した時に適切にセットする必要がある。
-        [SerializeField] private GameObject m_PlayerInfo = null;
+        private GameObject m_PlayerInfo = null;
         public void SetPlayerInfo(GameObject playerInfo) => m_PlayerInfo = playerInfo;
 
         public float m_StartingHealth = 100f;               // The amount of health each tank starts with.
