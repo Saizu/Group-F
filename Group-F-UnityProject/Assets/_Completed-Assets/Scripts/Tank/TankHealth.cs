@@ -10,8 +10,8 @@ namespace Complete
         /// HPを表示するUI
         /// 
         /// WARN: インスタンス化した時に適切にセットする必要がある。
-        private GameObject m_PlayerInfo = null;
-        public void SetPlayerInfo (GameObject playerInfo) => m_PlayerInfo = playerInfo;
+        [SerializeField] private GameObject m_PlayerInfo = null;
+        public void SetPlayerInfo(GameObject playerInfo) => m_PlayerInfo = playerInfo;
 
         public float m_StartingHealth = 100f;               // The amount of health each tank starts with.
         public GameObject m_ExplosionPrefab;                // A prefab that will be instantiated in Awake, then used whenever the tank dies.
@@ -25,6 +25,9 @@ namespace Complete
 
         private void Awake ()
         {
+
+            //m_PlayerInfo = GetComponentInChildren<PlayerInfo>().gameObject;
+
             // Instantiate the explosion prefab and get a reference to the particle system on it.
             m_ExplosionParticles = Instantiate (m_ExplosionPrefab).GetComponent<ParticleSystem> ();
 
@@ -49,12 +52,18 @@ namespace Complete
 
         public void TakeDamage (float amount)
         {
+            if (m_PlayerInfo == null)
+{
+    Debug.LogError($"{name}: m_PlayerInfo is null!");
+}
+else
+{
+    Debug.Log($"{name}: m_PlayerInfo = {m_PlayerInfo.name}");
+}
             // Reduce current health by the amount of damage done.
             m_CurrentHealth -= amount;
-
             // Change the UI elements appropriately.
             SetHealthUI ();
-
             // If the current health is at or below zero and it has not yet been registered, call OnDeath.
             if (m_CurrentHealth <= 0f && !m_Dead)
             {

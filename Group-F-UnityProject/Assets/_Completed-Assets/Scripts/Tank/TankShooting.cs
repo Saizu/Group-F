@@ -7,12 +7,6 @@ namespace Complete
 {
     public class TankShooting : MonoBehaviour
     {
-        /// 残弾数等を表示するUI
-        /// 
-        /// WARN: インスタンス化した時に適切にセットする必要がある。
-        private GameObject m_PlayerInfo = null;
-        public void SetPlayerInfo(GameObject playerInfo) => m_PlayerInfo = playerInfo;
-
         [SerializeField] private WeaponStockData m_ShellStockData;  // 銃弾の所持データ
         [SerializeField] private WeaponStockData m_MineStockData; // 地雷の所持データ
         [SerializeField] private GameObject m_MinePrefab;
