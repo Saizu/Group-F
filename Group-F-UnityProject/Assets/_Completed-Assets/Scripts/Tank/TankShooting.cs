@@ -40,7 +40,9 @@ namespace Complete
         private float m_ChargeSpeed;                // How fast the launch force increases, based on the max charge time.
         private bool m_Fired;                       // Whether or not the shell has been launched with this button press.
         public event Action<string, int> OnWeaponStockChanged;
-        
+        public event Action OnMinePlaced;
+
+
         private bool m_IsCharging;
         private bool m_IsIncreasing = true;
 
@@ -210,6 +212,7 @@ namespace Complete
                 Instantiate(m_MinePrefab, transform.position - transform.forward * 2, Quaternion.identity);
                 weaponStockDictionary["Mine"].Decrement();
                 NotifyWeaponStockChanged("Mine");
+                OnMinePlaced?.Invoke(); // 地雷設置イベントを発火
             }
         }
 
@@ -217,8 +220,13 @@ namespace Complete
         {
             if (OnWeaponStockChanged != null)
             {
-                OnWeaponStockChanged.Invoke(weaponName, weaponStockDictionary[weaponName].CurrentCount);
+                OnWeaponStockChanged?.Invoke(weaponName, weaponStockDictionary[weaponName].CurrentCount);
             }
+        }
+
+        public WeaponStockData GetWeaponStockData(string weaponName)
+        {
+            return weaponStockDictionary[weaponName];
         }
     }
 }
