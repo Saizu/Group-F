@@ -62,11 +62,11 @@ namespace Complete
             weaponStockDictionary.Add("Shell", m_ShellStockData);
             weaponStockDictionary.Add("Mine", m_MineStockData);
 
-            NotifyWeaponStockChanged("Shell");
-            NotifyWeaponStockChanged("Mine");
-
             m_ShellStockData.InitializeCount();
             m_MineStockData.InitializeCount();
+            
+            NotifyWeaponStockChanged("Shell");
+            NotifyWeaponStockChanged("Mine");
         }
 
 
