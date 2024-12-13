@@ -22,10 +22,10 @@ namespace Complete
         public int GetWinCount() => m_Wins;
 
         private TankMovement m_Movement;                        // Reference to tank's movement script, used to disable and enable control.
-        private TankShooting m_Shooting;                        // Reference to tank's shooting script, used to disable and enable control.
+        private TankShooting m_Shooting;             // Reference to tank's shooting script, used to disable and enable control.
         private GameObject m_CanvasGameObject;                  // Used to disable the world space UI during the Starting and Ending phases of each round.
         public event Action<int, string, WeaponStockData> OnWeaponStockChanged; // PlayerNumber, WeaponName, StockDataを通知するイベント
-        private float mineDisableDuration = 2.0f;
+        private float mineDisableDuration = 2.0f;               // 地雷を設置中に動きが止まる時間
 
 
         public void Setup()
@@ -98,13 +98,13 @@ namespace Complete
             m_PlayerInfo.GetComponent<PlayerInfo>().UpdateWinCount(m_Wins);
         }
 
-        // 地雷の所持数が変化したイベントを受け取り、さらにイベントを発生
+        // 武器の所持数が変化したイベントを受け取り、さらにイベントを発生
         private void HandleWeaponStockChanged(string weaponName, int currentCount)
         {
-            if (weaponName == "Mine")
+            if (weaponName == "Shell" || weaponName == "Mine")
             {
-                var mineStockData = m_Shooting.GetWeaponStockData("Mine");
-                OnWeaponStockChanged?.Invoke(m_PlayerNumber, weaponName, mineStockData);
+                var stockData = m_Shooting.GetWeaponStockData(weaponName);
+                OnWeaponStockChanged?.Invoke(m_PlayerNumber, weaponName, stockData);
             }
         }
 

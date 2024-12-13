@@ -15,7 +15,9 @@ public class PlayerStockArea : MonoBehaviour
         {
             for (int i = 0; i < singleShells.Length; i++)
             {
-                if (i < shellData.CurrentCount)
+                int shellNum = shellData.CurrentCount % 10;
+
+                if (i < shellNum)
                 {
                     singleShells[i].gameObject.SetActive(true);
                 }
@@ -39,7 +41,7 @@ public class PlayerStockArea : MonoBehaviour
                 }
             }
         }
-                if (weaponStockDictionary.TryGetValue("Mine", out WeaponStockData mineData))
+        if (weaponStockDictionary.TryGetValue("Mine", out WeaponStockData mineData))
         {
             for (int i = 0; i < mines.Length; i++)
             {

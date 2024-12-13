@@ -58,12 +58,12 @@ namespace Complete
             // The rate that the launch force charges up is the range of possible forces by the max charge time.
             m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
 
+            m_ShellStockData.InitializeCount();
+            m_MineStockData.InitializeCount();
+
             // 武器データを辞書に登録
             weaponStockDictionary.Add("Shell", m_ShellStockData);
             weaponStockDictionary.Add("Mine", m_MineStockData);
-
-            m_ShellStockData.InitializeCount();
-            m_MineStockData.InitializeCount();
             
             NotifyWeaponStockChanged("Shell");
             NotifyWeaponStockChanged("Mine");
@@ -198,7 +198,7 @@ namespace Complete
             if (weaponStockDictionary.TryGetValue(weaponName, out var stockData))
             {
                 stockData.Add(stockData.ReplenishCount);
-                NotifyWeaponStockChanged(weaponName);
+                NotifyWeaponStockChanged(weaponName);            
             }
         }
 
