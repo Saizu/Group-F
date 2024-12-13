@@ -8,6 +8,7 @@ public class ItemManager : MonoBehaviour
 {
     public TMP_Text item1Text;
     public TMP_Text item2Text;
+    public TMP_Text errorMessageText;
     public GameObject mainMenuPage;
 
     private string currentUser;
@@ -28,6 +29,7 @@ public class ItemManager : MonoBehaviour
         currentUser = PlayerPrefs.GetString("currentUser", "defaultUser");
         userId = PlayerPrefs.GetInt("currentUserId", -1);
         StartCoroutine(GetItemsById(userId));
+        ShowErrorMessage("");
     }
 
     public void OnUseItem1ButtonClicked()
@@ -43,6 +45,7 @@ public class ItemManager : MonoBehaviour
             if (ItemEffectManager.IsItemEffectActive(1))
             {
                 Debug.Log("Item 1 effect is already active!");
+                ShowErrorMessage("Item 1 effect is already active!");
                 return;
             }
 
@@ -58,6 +61,7 @@ public class ItemManager : MonoBehaviour
                 // Reduce item amount
                 item1Amount -= 1;
                 StartCoroutine(dataFetcher.PostItemToUser(userId, 1, -1));
+                ShowErrorMessage("You have used "+ item1Name + "!");
 
                 // Update saved items
                 UpdateSavedItems(item1Name, item1Amount);
@@ -69,6 +73,7 @@ public class ItemManager : MonoBehaviour
             }
             else
             {
+                ShowErrorMessage("Not enough " + item1Name + ".");
                 Debug.Log("Not enough " + item1Name + ".");
             }
         }
@@ -86,6 +91,7 @@ public class ItemManager : MonoBehaviour
             // Check if effect is already active
             if (ItemEffectManager.IsItemEffectActive(2))
             {
+                ShowErrorMessage("Item 2 effect is already active!");
                 Debug.Log("Item 2 effect is already active!");
                 return;
             }
@@ -102,6 +108,7 @@ public class ItemManager : MonoBehaviour
                 // Reduce item amount
                 item2Amount -= 1;
                 StartCoroutine(dataFetcher.PostItemToUser(userId, 2, -1));
+                ShowErrorMessage("You have used "+ item2Name + "!");
 
                 // Update saved items
                 UpdateSavedItems(item2Name, item2Amount);
@@ -113,6 +120,7 @@ public class ItemManager : MonoBehaviour
             }
             else
             {
+                ShowErrorMessage("Not enough " + item2Name + ".");
                 Debug.Log("Not enough " + item2Name + ".");
             }
         }
@@ -222,4 +230,17 @@ public class ItemManager : MonoBehaviour
         // アイテムの表示を更新
         UpdateItemDisplay();
     }
+
+        private void ShowErrorMessage(string message)
+    {
+        if (errorMessageText != null)
+        {
+            errorMessageText.text = message;
+        }
+        else
+        {
+            Debug.LogError("Error Message Text is not assigned in the inspector.");
+        }
+    }
+
 }

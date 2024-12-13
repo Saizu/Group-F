@@ -106,7 +106,7 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-    //ここにサーバーからどんなパスワードか取ってきて正しいか確認できるようにしてください。
+    //ここにサーバーからどんなパスワードか取ってきて正しいか確認できるようにしてください。ここはあっているか確認する関数です。
     private bool ValidateUser(string userName, string password)
     {   
         //これはサーバーを通していません。ここをサーバーを通してパスワードを取得して格納してください。

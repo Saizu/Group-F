@@ -60,5 +60,6 @@ public static class ItemEffectManager
     {
         IsItem1EffectActive = false;
         IsItem2EffectActive = false;
+        Debug.LogWarning("Reset ItemEffects bools.");
     }
 }

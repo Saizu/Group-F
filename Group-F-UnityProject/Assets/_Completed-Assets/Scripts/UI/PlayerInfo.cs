@@ -9,6 +9,8 @@ public class PlayerInfo : MonoBehaviour
     private GameObject win;
     [SerializeField]
     private GameObject hpBar;
+    [SerializeField]
+    private GameObject overHpBar;
 
     [SerializeField]
     private GameObject shellImage;
@@ -35,6 +37,15 @@ public class PlayerInfo : MonoBehaviour
         var sizeDelta = hpBar.GetComponent<RectTransform>().sizeDelta;
         sizeDelta.x = newWidth;
         hpBar.GetComponent<RectTransform>().sizeDelta = sizeDelta;
+    }
+
+    public void UpdateOverHP(float rate)
+    {
+        var panelRectTransform = panel.GetComponent<RectTransform>();
+        var newWidth = panelRectTransform.rect.width * panelRectTransform.localScale.x * rate * 0.9f;
+        var sizeDelta = overHpBar.GetComponent<RectTransform>().sizeDelta;
+        sizeDelta.x = newWidth;
+        overHpBar.GetComponent<RectTransform>().sizeDelta = sizeDelta;
     }
 
     public void UpdateStock(int stockCount)

@@ -5,7 +5,7 @@ public class ItemEffectHandler : MonoBehaviour
 {
     private bool isMonitoring = true;
 
-    [SerializeField] private float maxHealth = 130f;
+    [SerializeField] private float maxHealth = 200f;
     [SerializeField] private float speed = 15f;
 
     void Update()
@@ -26,7 +26,7 @@ public class ItemEffectHandler : MonoBehaviour
                     {
                         // TankHealthの初期値をmaxHealthで設定
                         health.m_StartingHealth = maxHealth;
-                        Debug.Log("PlayerのStartingHealthを " + maxHealth + " に変更しました。");
+                        Debug.Log("PlayerのStartingHealthを2倍にしました。");
                     }
                     else
                     {
@@ -63,6 +63,7 @@ public class ItemEffectHandler : MonoBehaviour
                 }
             }
         }
+    ItemEffectManager.ResetItemEffects();
     // スクリプトのオブジェクトを削除
     Destroy(this.gameObject);
     }

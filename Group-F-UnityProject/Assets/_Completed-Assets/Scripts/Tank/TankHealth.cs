@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 namespace Complete
 {
@@ -21,7 +22,7 @@ namespace Complete
         private ParticleSystem m_ExplosionParticles;        // The particle system the will play when the tank is destroyed.
         private float m_CurrentHealth;                      // How much health the tank currently has.
         private bool m_Dead;                                // Has the tank been reduced beyond zero health yet?
-
+        public float overHP = 0.0f;
 
         private void Awake ()
         {
@@ -35,23 +36,34 @@ namespace Complete
             m_ExplosionParticles.gameObject.SetActive (false);
         }
 
-
         private void OnEnable()
         {
-            // When the tank is enabled, reset the tank's health and whether or not it's dead.
-            m_CurrentHealth = m_StartingHealth;
             m_Dead = false;
-
-            // Update the health slider's value and color.
-            SetHealthUI();
+            // 初期化処理を遅延させるためにコルーチンを使用
+            StartCoroutine(InitializeHealthWithDelay());
+            Debug.Log("1:" + m_CurrentHealth);
         }
 
+        private IEnumerator InitializeHealthWithDelay()
+        {
+            
+            yield return null;  
+
+            // 1フレーム後に初期HPを設定
+            m_CurrentHealth = m_StartingHealth;
+            
+            // UIを更新
+            SetHealthUI();
+
+            // 初期化後にログを出力
+            Debug.Log("2:" + m_CurrentHealth);
+        }
 
         public void TakeDamage (float amount)
         {
             // Reduce current health by the amount of damage done.
             m_CurrentHealth -= amount;
-
+            Debug.Log(m_CurrentHealth);
             // Change the UI elements appropriately.
             SetHealthUI ();
 
@@ -62,23 +74,38 @@ namespace Complete
             }
         }
 
-
         private void SetHealthUI ()
         {
+            if(m_CurrentHealth > 100f)
+            {
+                overHP = m_CurrentHealth - 100f;
+                m_CurrentHealth -= overHP;
+            }
             if (m_PlayerInfo == null)
             {
                 return;
             }
             if (m_StartingHealth > 0.0f)
             {
-                m_PlayerInfo.GetComponent<PlayerInfo>().UpdateHP(m_CurrentHealth / m_StartingHealth);
+                
+                if(overHP > 0f)
+                {
+                    m_PlayerInfo.GetComponent<PlayerInfo>().UpdateOverHP(overHP / 100f);
+                }
+                else
+                {
+                    m_PlayerInfo.GetComponent<PlayerInfo>().UpdateOverHP(0f);
+                    m_PlayerInfo.GetComponent<PlayerInfo>().UpdateHP(m_CurrentHealth / 100f);
+                }
             }
             else
             {
                 m_PlayerInfo.GetComponent<PlayerInfo>().UpdateHP(0.0f);
             }
+            //初期化
+            m_CurrentHealth += overHP;
+            overHP = 0f;            
         }
-
 
         private void OnDeath ()
         {
@@ -93,7 +120,7 @@ namespace Complete
             m_ExplosionParticles.Play ();
 
             // Play the tank explosion sound effect.
-            m_ExplosionAudio.Play();
+            m_ExplosionAudio.Play ();
 
             // Turn the tank off.
             gameObject.SetActive (false);
