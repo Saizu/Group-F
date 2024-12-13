@@ -37,7 +37,7 @@ namespace Complete
         }
 
         // ランダムな位置にShellCartridgeプレハブを生成
-        private void SpawnCartridge()
+        private void SpawnCartridge(CartridgeData cartridgeData)
         {
             // ランダムな位置を生成
             Vector3 randomPosition = new Vector3(
@@ -47,9 +47,7 @@ namespace Complete
             );
 
             // プレハブの生成
-            Instantiate(shellCartridgeData.cartridgePrefab, randomPosition, Quaternion.identity);
-            Instantiate(mineCartridgeData.cartridgePrefab, randomPosition, Quaternion.identity);
-
+            Instantiate(cartridgeData.cartridgePrefab, randomPosition, Quaternion.identity);
         }
 
         // 定期的にSpawnCartridgeメソッドを呼び出すコルーチン
@@ -57,7 +55,10 @@ namespace Complete
         {
             while (true)
             {
-                SpawnCartridge(); // ShellCartridgeをスポーン
+                foreach (var cartridgeData in cartridgeDataArray)
+                {
+                    SpawnCartridge(cartridgeData); // 各CartridgeDataのプレハブをスポーン
+                }
                 yield return new WaitForSeconds(5f); // 一定時間待機（5秒ごとにスポーン）
             }
         }
