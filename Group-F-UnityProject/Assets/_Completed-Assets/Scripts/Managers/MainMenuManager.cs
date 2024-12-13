@@ -10,6 +10,7 @@ public class MainMenuManager : MonoBehaviour
     void Start(){
         AppState.CurrentPage = "Main";
         Debug.Log($"Current Page: {AppState.CurrentPage}");
+        
     }
 
 
