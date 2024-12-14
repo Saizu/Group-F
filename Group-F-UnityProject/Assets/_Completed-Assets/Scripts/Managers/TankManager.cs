@@ -101,7 +101,7 @@ namespace Complete
                 else{
                     Debug.Log("ラウンドが終わったよ");
                 }
-            m_PlayerInfo.GetComponent<PlayerInfo>().UpdateWinCount(m_Wins);
+            m_PlayerInfo.GetComponent<PlayerStockArea>().UpdateWinCount(m_Wins);
         }
 
         // 武器の所持数が変化したイベントを受け取り、さらにイベントを発生
