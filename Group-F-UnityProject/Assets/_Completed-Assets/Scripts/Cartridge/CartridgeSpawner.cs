@@ -5,8 +5,7 @@ namespace Complete
 {
     public class CartridgeSpawner : MonoBehaviour
     {
-        [SerializeField] private CartridgeData shellCartridgeData; // ShellCartridgeプレハブを割り当てる変数
-        [SerializeField] private CartridgeData mineCartridgeData; // MineCartridgeプレハブを割り当てる変数
+        [SerializeField] private CartridgeData[] cartridgeDataArray; // Cartridgeプレハブを割り当てる変数
         public Vector3 spawnAreaMin = new Vector3(-10, 0, -10);    // スポーンエリアの最小座標
         public Vector3 spawnAreaMax = new Vector3(10, 0, 10);      // スポーンエリアの最大座標
         private Coroutine m_SpawnRoutine; // コルーチンの参照を保持する変数
@@ -37,26 +36,26 @@ namespace Complete
         private void SpawnCartridge(CartridgeData cartridgeData)
         {
             // ランダムな位置を生成
-            Vector3 randomPosition = new Vector3(
+            cartridgeData.spawnPosition = new Vector3(
                 Random.Range(spawnAreaMin.x, spawnAreaMax.x),
                 spawnAreaMin.y,
                 Random.Range(spawnAreaMin.z, spawnAreaMax.z)
             );
 
             // プレハブの生成
-            Instantiate(cartridgeData.cartridgePrefab, randomPosition, Quaternion.identity);
+            Instantiate(cartridgeData.cartridgePrefab, cartridgeData.spawnPosition, Quaternion.identity);
         }
 
         // 定期的にSpawnCartridgeメソッドを呼び出すコルーチン
-        private IEnumerator SpawnRoutine(CartridgeData[] cartridgeDataArray)
+        private IEnumerator SpawnRoutine(CartridgeData cartridgeData)
         {
             while (true)
             {
-                foreach (var cartridgeData in cartridgeDataArray)
-                {
-                    SpawnCartridge(cartridgeData); // 各CartridgeDataのプレハブをスポーン
-                    yield return new WaitForSeconds(cartridgeData.spawnFrequency); // 一定時間待機
-                }
+                // 指定されたスポーン頻度で待機
+                yield return new WaitForSeconds(cartridgeData.spawnFrequency);
+
+                // カートリッジをスポーン
+                SpawnCartridge(cartridgeData);
             }
         }
 
@@ -68,8 +67,10 @@ namespace Complete
                 // ゲームがプレイ中なら、SpawnRoutineを開始
                 if (m_SpawnRoutine == null)
                 {
-                    CartridgeData[] cartridgeDataArray = { shellCartridgeData, mineCartridgeData };
-                    m_SpawnRoutine = StartCoroutine(SpawnRoutine(cartridgeDataArray));
+                    foreach (var cartridgeData in cartridgeDataArray)
+                    {
+                        m_SpawnRoutine = StartCoroutine(SpawnRoutine(cartridgeData));
+                    }
                 }
             }
             else

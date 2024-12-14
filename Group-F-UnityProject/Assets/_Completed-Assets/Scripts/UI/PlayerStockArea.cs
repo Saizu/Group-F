@@ -55,11 +55,10 @@ public class PlayerStockArea : MonoBehaviour
             for (int i = 0; i < singleShells.Length; i++)
             {
                 int shellNum;
-                if(shellData.CurrentCount == 50)
-                {
-                    shellNum = 10;
+                if(shellData.CurrentCount == 0){
+                    shellNum = 0;
                 }else{
-                    shellNum = shellData.CurrentCount % 10;
+                    shellNum = shellData.CurrentCount - (shellData.CurrentCount - 1) / 10 * 10;
                 }
 
                 if (i < shellNum)
@@ -74,9 +73,9 @@ public class PlayerStockArea : MonoBehaviour
 
             for (int i = 0; i < groupedShells.Length; i++)
             {
-                int groupThreshold = (i + 1) * 10;
+                int groupThreshold = (shellData.CurrentCount - 1) / 10;
 
-                if (shellData.CurrentCount >= groupThreshold)
+                if (i < groupThreshold)
                 {
                     groupedShells[i].gameObject.SetActive(true);
                 }

@@ -10,6 +10,7 @@ namespace Complete
         [SerializeField] private WeaponStockData m_ShellStockData;  // 銃弾の所持データ
         [SerializeField] private WeaponStockData m_MineStockData; // 地雷の所持データ
         [SerializeField] private GameObject m_MinePrefab;
+        [SerializeField] private GameObject skullMarkerPrefab;
         private Dictionary<string, WeaponStockData> weaponStockDictionary = new Dictionary<string, WeaponStockData>();
 
         public int m_PlayerNumber = 1;              // Used to identify the different players.
@@ -58,7 +59,7 @@ namespace Complete
             // 武器データを辞書に登録
             weaponStockDictionary.Add("Shell", m_ShellStockData);
             weaponStockDictionary.Add("Mine", m_MineStockData);
-            
+
             NotifyWeaponStockChanged("Shell");
             NotifyWeaponStockChanged("Mine");
         }
@@ -192,7 +193,7 @@ namespace Complete
             if (weaponStockDictionary.TryGetValue(weaponName, out var stockData))
             {
                 stockData.Add(stockData.ReplenishCount);
-                NotifyWeaponStockChanged(weaponName);            
+                NotifyWeaponStockChanged(weaponName);
             }
         }
 
@@ -202,12 +203,27 @@ namespace Complete
             {
                 Vector3 placePosition = transform.position - transform.forward * 2;
                 placePosition.y = 0; // 地面の高さに合わせる
-                Instantiate(m_MinePrefab, placePosition, Quaternion.identity);
+                GameObject mine = Instantiate(m_MinePrefab, placePosition, Quaternion.identity);
+
+                // ドクロマークを設置
+                GameObject skullMarker = Instantiate(skullMarkerPrefab, placePosition + new Vector3(0, 1.5f, 0), Quaternion.identity);
+                ShellExplosion shellExplosion = mine.GetComponent<ShellExplosion>();
+                if (shellExplosion != null)
+                {
+                    shellExplosion.SetSkullMarker(skullMarker);
+                }
 
                 weaponStockDictionary["Mine"].Decrement();
                 NotifyWeaponStockChanged("Mine");
                 OnMinePlaced?.Invoke(); // 地雷設置イベントを発火
             }
+        }
+
+        // ドクロマークを生成するメソッド
+        private void PlaceSkullMarker(Vector3 position)
+        {
+            Vector3 skullPosition = position + new Vector3(0, 1.5f, 0); // 地面の少し上に表示
+            Instantiate(skullMarkerPrefab, skullPosition, Quaternion.identity);
         }
 
         private void NotifyWeaponStockChanged(string weaponName)
