@@ -33,7 +33,9 @@ public class ItemManager : MonoBehaviour
         StartCoroutine(GetItemsById(userId));
         ShowErrorMessage("");
     }
-
+    void Update(){
+        StartCoroutine(UpdateStaminaText(userId));
+    }
 
     private IEnumerator UpdateStaminaText(int userId)
     {

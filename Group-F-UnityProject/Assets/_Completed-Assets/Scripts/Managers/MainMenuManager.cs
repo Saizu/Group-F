@@ -10,16 +10,21 @@ public class MainMenuManager : MonoBehaviour
     public GameObject mainMenuPage; // メインメニュー画面
 
     private DataFetcher dataFetcher;
-
+    int userId = -1;
     void Start()
     {
         dataFetcher = GetComponent<DataFetcher>();
         AppState.CurrentPage = "Main";
         Debug.Log($"Current Page: {AppState.CurrentPage}");
 
-        int userId = PlayerPrefs.GetInt("currentUserId", -1);
+        userId = PlayerPrefs.GetInt("currentUserId", -1);
         StartCoroutine(UpdateStaminaText(userId));
     }
+
+    void Update(){
+        StartCoroutine(UpdateStaminaText(userId));
+    }
+
 
     private IEnumerator UpdateStaminaText(int userId)
     {
