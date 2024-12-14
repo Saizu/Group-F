@@ -94,13 +94,6 @@ namespace Complete
             {
                 m_Wins += 1;
             }
-                if (m_PlayerInfo == null)
-                {
-                    Debug.LogError($" PlayerInfo が見つかりません。");
-                }
-                else{
-                    Debug.Log("ラウンドが終わったよ");
-                }
             m_PlayerInfo.GetComponent<PlayerStockArea>().UpdateWinCount(m_Wins);
         }
 

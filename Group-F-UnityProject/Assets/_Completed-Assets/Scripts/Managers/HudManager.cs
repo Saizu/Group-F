@@ -14,6 +14,8 @@ namespace Complete
 
         private void OnEnable()
         {
+            gameManager.GameStateChanged += HandleGameStateChanged;
+
             // GameManagerのGameStateChangedイベントを購読
             gameManager.GameStateChanged += HandleGameStateChanged;
 
