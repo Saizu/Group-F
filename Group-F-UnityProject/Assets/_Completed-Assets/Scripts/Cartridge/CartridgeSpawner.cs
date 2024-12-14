@@ -55,8 +55,8 @@ namespace Complete
                 foreach (var cartridgeData in cartridgeDataArray)
                 {
                     SpawnCartridge(cartridgeData); // 各CartridgeDataのプレハブをスポーン
+                    yield return new WaitForSeconds(cartridgeData.spawnFrequency); // 一定時間待機
                 }
-                yield return new WaitForSeconds(5f); // 一定時間待機（5秒ごとにスポーン）
             }
         }
 
