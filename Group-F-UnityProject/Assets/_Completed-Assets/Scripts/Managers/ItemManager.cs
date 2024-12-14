@@ -101,7 +101,7 @@ public class ItemManager : MonoBehaviour
         {
             string item2Name = userItems.Skip(1).First().Key;
             int item2Amount = userItems.Skip(1).First().Value;
-            if(nowStamina == 5)
+            if(nowStamina >= 5)
             {
                 ShowErrorMessage("Your stamina is full!");
                 return;
