@@ -10,6 +10,7 @@ public class ItemManager : MonoBehaviour
     public TMP_Text item2Text;
     public TMP_Text errorMessageText;
     public GameObject mainMenuPage;
+    public TMP_Text staminaText;
 
     private string currentUser;
     //public GameObject item1Effect;
@@ -28,10 +29,22 @@ public class ItemManager : MonoBehaviour
 
         currentUser = PlayerPrefs.GetString("currentUser", "defaultUser");
         userId = PlayerPrefs.GetInt("currentUserId", -1);
+        StartCoroutine(UpdateStaminaText(userId));
         StartCoroutine(GetItemsById(userId));
         ShowErrorMessage("");
     }
 
+
+    private IEnumerator UpdateStaminaText(int userId)
+    {
+        // データをフェッチして少し待つ
+        yield return null; // 必要に応じてここで待機処理を追加
+
+        int nowStamina = dataFetcher.GetSavedUserStamina(userId);
+
+        // テキストを更新
+        staminaText.text = $"Now Stamina {nowStamina} / 5";
+    }
     public void OnUseItem1ButtonClicked()
     {
         Dictionary<string, int> userItems = dataFetcher.GetSavedUserItems();
@@ -45,7 +58,7 @@ public class ItemManager : MonoBehaviour
             if (ItemEffectManager.IsItemEffectActive(1))
             {
                 Debug.Log("Item 1 effect is already active!");
-                ShowErrorMessage("Item 1 effect is already active!");
+                ShowErrorMessage(item1Name + " effect is already active!");
                 return;
             }
 
@@ -82,19 +95,26 @@ public class ItemManager : MonoBehaviour
     public void OnUseItem2ButtonClicked()
     {
         Dictionary<string, int> userItems = dataFetcher.GetSavedUserItems();
+        int nowStamina = dataFetcher.GetSavedUserStamina(userId);
 
         if (userItems.Count > 1)
         {
             string item2Name = userItems.Skip(1).First().Key;
             int item2Amount = userItems.Skip(1).First().Value;
-
+            if(nowStamina == 5)
+            {
+                ShowErrorMessage("Your stamina is full!");
+                return;
+            }
             // Check if effect is already active
+            /*
             if (ItemEffectManager.IsItemEffectActive(2))
             {
-                ShowErrorMessage("Item 2 effect is already active!");
+                ShowErrorMessage(item2Name + " effect is already active!");
                 Debug.Log("Item 2 effect is already active!");
                 return;
             }
+            */
 
             if (item2Amount > 0)
             {
@@ -112,6 +132,9 @@ public class ItemManager : MonoBehaviour
 
                 // Update saved items
                 UpdateSavedItems(item2Name, item2Amount);
+                
+                nowStamina += 1;
+                StartCoroutine(dataFetcher.UpdateUserStamina(userId,nowStamina));
 
                 // Update display
                 UpdateItemDisplay();

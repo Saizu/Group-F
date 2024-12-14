@@ -14,7 +14,7 @@ public class BonusManager : MonoBehaviour
     public GameObject mainMenuPage; // メインメニュー
     private DataFetcher dataFetcher;
 
-    [SerializeField] private string bonusMessage = "You received your login bonus!";
+    private string bonusMessage; 
     [SerializeField] private int addNumItem1 = 1;
     [SerializeField] private int addNumItem2 = 1;
 
@@ -35,6 +35,15 @@ public class BonusManager : MonoBehaviour
 
         // PlayerPrefsから保存されているアイテム情報を取得
         Dictionary<string, int> userItems = dataFetcher.GetSavedUserItems();
+
+        //ログインボーナスを変更するためのプログラム
+        int user_id = PlayerPrefs.GetInt("currentUserId",-1);
+        int consecutiveDays = dataFetcher.GetSavedConsecutiveDays(user_id);
+        consecutiveDays = consecutiveDays % 7;
+        if(consecutiveDays == 0){
+            consecutiveDays += 7;
+        }
+        bonusMessage = "You received the "+consecutiveDays+"day's login bonus!";
 
         // userItemsの内容をログに出力
         if (userItems.Count > 0)
@@ -76,6 +85,9 @@ public class BonusManager : MonoBehaviour
                 Debug.Log("2番目のアイテムは存在しません。");
             }
         }
+        
+        addNumItem1 += consecutiveDays;
+        addNumItem2 += consecutiveDays;
 
         // アイテム数を表示
         item1Text.text = $"Get {item1Name}: +{addNumItem1}";
@@ -99,8 +111,8 @@ public class BonusManager : MonoBehaviour
         // PlayerPrefs からユーザーIDを取得する
         userId = PlayerPrefs.GetInt("currentUserId", -1);  // デフォルト値として -1 を設定
         //1,2を付与するとして今回設計
-        StartCoroutine(dataFetcher.PostItemToUser(userId,1,1));
-        StartCoroutine(dataFetcher.PostItemToUser(userId,2,1));
+        StartCoroutine(dataFetcher.PostItemToUser(userId,1,addNumItem1));
+        StartCoroutine(dataFetcher.PostItemToUser(userId,2,addNumItem2));
         
     }
 

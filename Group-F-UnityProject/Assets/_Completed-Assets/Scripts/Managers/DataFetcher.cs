@@ -34,7 +34,9 @@ public class DataFetcher : MonoBehaviour
                     PlayerPrefs.Save(); // 保存を確定するために必ず呼び出す
                     StartCoroutine(GetItemsByUserId(currentUserId)); 
                     yield return StartCoroutine(GetLastLogin(currentUserId)); 
-                    StartCoroutine(UpdateLastLogin(currentUserId)); 
+                    StartCoroutine(UpdateLastLogin(currentUserId));
+                    StartCoroutine(GetUserStamina(currentUserId));
+                    StartCoroutine(GetConsecutiveDays(currentUserId));
                 }
                 else
                 {
@@ -265,6 +267,180 @@ public class DataFetcher : MonoBehaviour
             }
         }
     }
+
+ public IEnumerator GetUserStamina(int userId)
+    {
+        string url = $"{apiUrl}/users/stamina/?id={userId}";
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                string staminaResponse = webRequest.downloadHandler.text;
+
+                try
+                {
+                    // JSON からスタミナをパース
+                    StaminaResponse response = JsonUtility.FromJson<StaminaResponse>(staminaResponse);
+                    int stamina = response.stamina;
+
+                    // PlayerPrefs にスタミナを保存
+                    PlayerPrefs.SetInt($"UserStamina_{userId}", stamina);
+                    PlayerPrefs.Save();
+
+                    Debug.Log($"ユーザー {userId} のスタミナ: {stamina}");
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"スタミナレスポンスのパースに失敗: {ex.Message}");
+                }
+            }
+            else
+            {
+                Debug.LogError($"スタミナ取得に失敗: {webRequest.error}");
+            }
+        }
+    }
+public IEnumerator UpdateUserStamina(int userId, int staminaValue)
+{
+    string url = $"{apiUrl}/users/update-stamina/";
+
+    // サーバーが期待する形式のJSONオブジェクトを作成
+    StaminaUpdateRequest requestBody = new StaminaUpdateRequest
+    {
+        id = userId,
+        stamina = staminaValue // スタミナを設定
+    };
+
+    // JSONに変換
+    string json = JsonUtility.ToJson(requestBody);
+
+    // 送信するJSON内容をデバッグ
+    Debug.Log($"送信するJSON: {json}");
+
+    using (UnityWebRequest webRequest = new UnityWebRequest(url, "POST"))
+    {
+        byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(json);
+        webRequest.uploadHandler = new UploadHandlerRaw(jsonToSend);
+        webRequest.downloadHandler = new DownloadHandlerBuffer();
+        webRequest.SetRequestHeader("Content-Type", "application/json");
+
+        yield return webRequest.SendWebRequest();
+
+        if (webRequest.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log($"ユーザー {userId} のスタミナを {staminaValue} に更新しました");
+
+            // PlayerPrefs にスタミナを保存
+            PlayerPrefs.SetInt($"UserStamina_{userId}", staminaValue);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            // サーバーからのエラーレスポンス全体をログに出力
+            string errorResponse = webRequest.downloadHandler.text;
+            Debug.LogError($"スタミナ更新に失敗: {webRequest.error}, レスポンス: {errorResponse}");
+        }
+    }
+}
+
+ public IEnumerator GetConsecutiveDays(int userId)
+    {
+        string url = $"{apiUrl}/users/consecutive-days/?id={userId}";
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                string consecutiveDaysResponse = webRequest.downloadHandler.text;
+
+                try
+                {
+                    // JSON から連続日数をパース
+                    ConsecutiveDaysResponse response = JsonUtility.FromJson<ConsecutiveDaysResponse>(consecutiveDaysResponse);
+                    int consecutiveDays = response.consecutive_days;
+
+                    // PlayerPrefs に連続日数を保存
+                    PlayerPrefs.SetInt($"UserConsecutiveDays_{userId}", consecutiveDays);
+                    PlayerPrefs.Save();
+
+                    Debug.Log($"ユーザー {userId} の連続日数: {consecutiveDays}");
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"連続日数レスポンスのパースに失敗: {ex.Message}");
+                }
+            }
+            else
+            {
+                Debug.LogError($"連続日数の取得に失敗: {webRequest.error}");
+            }
+        }
+    }
+
+    public IEnumerator UpdateConsecutiveDays(int userId, int consecutiveDaysValue)
+{
+    string url = $"{apiUrl}/users/update-consecutive-days/";
+
+    // サーバーが期待する形式のJSONオブジェクトを作成
+    ConsecutiveDaysUpdateRequest requestBody = new ConsecutiveDaysUpdateRequest
+    {
+        id = userId,
+        ConsecutiveDays = consecutiveDaysValue // 連続日数を設定
+    };
+
+    // JSONに変換
+    string json = JsonUtility.ToJson(requestBody);
+
+    // 送信するJSON内容をデバッグ
+    Debug.Log($"送信するJSON: {json}");
+
+    using (UnityWebRequest webRequest = new UnityWebRequest(url, "POST"))
+    {
+        byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(json);
+        webRequest.uploadHandler = new UploadHandlerRaw(jsonToSend);
+        webRequest.downloadHandler = new DownloadHandlerBuffer();
+        webRequest.SetRequestHeader("Content-Type", "application/json");
+
+        yield return webRequest.SendWebRequest();
+
+        if (webRequest.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log($"ユーザー {userId} の連続日数を {consecutiveDaysValue} に更新しました");
+            
+            // PlayerPrefsに連続日数を更新
+            PlayerPrefs.SetInt($"UserConsecutiveDays_{userId}", consecutiveDaysValue);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            // サーバーからのエラーレスポンス全体をログに出力
+            string errorResponse = webRequest.downloadHandler.text;
+            Debug.LogError($"連続日数の更新に失敗: {webRequest.error}, レスポンス: {errorResponse}");
+        }
+    }
+}
+
+
+    // PlayerPrefsから保存されたスタミナを取得するメソッド
+    public int GetSavedUserStamina(int userId)
+    {
+        return PlayerPrefs.GetInt($"UserStamina_{userId}", 0);
+    }
+
+    // PlayerPrefsから保存された連続日数を取得するメソッド
+    public int GetSavedConsecutiveDays(int userId)
+    {
+        return PlayerPrefs.GetInt($"UserConsecutiveDays_{userId}", 0);
+    }
+
+    
+
+
 }
 // APIレスポンスとして返される userId を格納するクラス
 [System.Serializable]
@@ -310,4 +486,29 @@ public class ItemWithIdAndName
 {
     public int ID;
     public string Name;
+}
+
+[System.Serializable]
+    public class StaminaResponse
+    {
+        public int stamina;
+    }
+[System.Serializable]
+    public class ConsecutiveDaysResponse
+    {
+        public int consecutive_days;
+    }
+    // スタミナ更新のためのリクエストボディクラス
+[System.Serializable]
+public class StaminaUpdateRequest
+{
+    public int id;      // ユーザーID
+    public int stamina; // スタミナ
+}
+
+[System.Serializable]
+public class ConsecutiveDaysUpdateRequest
+{
+    public int id;               // ユーザーID
+    public int ConsecutiveDays;  // 連続日数
 }

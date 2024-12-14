@@ -38,6 +38,7 @@ public class ItemEffectHandler : MonoBehaviour
             }
         }
 
+        /*
         // アイテム効果2がアクティブかどうかを確認
         if (ItemEffectManager.IsItemEffectActive(2)) 
         {
@@ -63,6 +64,7 @@ public class ItemEffectHandler : MonoBehaviour
                 }
             }
         }
+        */
     ItemEffectManager.ResetItemEffects();
     // スクリプトのオブジェクトを削除
     Destroy(this.gameObject);

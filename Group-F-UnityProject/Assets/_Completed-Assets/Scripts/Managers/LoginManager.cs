@@ -29,10 +29,12 @@ public class LoginManager : MonoBehaviour
 
     private string currentUser; // 現在ログイン中のユーザー名
     private DataFetcher dataFetcher;
+    private DateManager dateManager;
     //private bool test = true;
     void Start()
     {
         dataFetcher = GetComponent<DataFetcher>();
+        dateManager = GetComponent<DateManager>();
         AppState.CurrentPage = "Login";
         //Debug.Log($"Current Page: {AppState.CurrentPage}");
         loginPage.SetActive(true);
@@ -153,6 +155,10 @@ public class LoginManager : MonoBehaviour
                 string today = System.DateTime.UtcNow.ToString("yyyy-MM-dd");
                 Debug.Log($"Today:{today}");
 
+                string yesterday = dateManager.GetYesterdayDate(today);
+
+                int user_id = PlayerPrefs.GetInt("currentUserId",-1);
+
                 // 日付が一致するかを確認し、結果を表示
                 if (lastLoginDate == today)
                 {   
@@ -165,6 +171,19 @@ public class LoginManager : MonoBehaviour
                 }
                 else
                 {
+                    if(lastLoginDate == "0001-01-01")
+                    {
+                        StartCoroutine(dataFetcher.UpdateUserStamina(user_id,3));
+                    }
+                    if(lastLoginDate == yesterday)
+                    {                        
+                        int consecutiveDays = dataFetcher.GetSavedConsecutiveDays(user_id);
+                        consecutiveDays += 1;
+                        StartCoroutine(dataFetcher.UpdateConsecutiveDays(user_id,consecutiveDays));
+                    }
+                    else{
+                        StartCoroutine(dataFetcher.UpdateConsecutiveDays(user_id,1));
+                    }
                     yield return new WaitForSeconds(0.1f);
                     // ボーナスページへ遷移
                     bonusPage.SetActive(true);
