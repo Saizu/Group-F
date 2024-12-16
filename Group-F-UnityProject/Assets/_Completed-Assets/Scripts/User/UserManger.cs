@@ -10,6 +10,17 @@ public class UserManager : MonoBehaviour
     public string UserId { get; private set; }
     public string UserName { get; private set; }
 
+    private void Awake()
+    {
+        // ユーザー情報の複数生成を防ぐ
+        if (FindObjectsOfType<UserManager>().Length > 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+
     void Start()
     {
         // ロード
@@ -80,17 +91,4 @@ public class UserManager : MonoBehaviour
 
         return true;
     }
-
-    void Awake()
-    {
-        // UserManagerが複数生成されないようにする
-        if (FindObjectsOfType<UserManager>().Length > 1)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        DontDestroyOnLoad(gameObject);
-    }
-
 }

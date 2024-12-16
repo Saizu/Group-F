@@ -8,7 +8,6 @@ public class UserInfoDisplay : MonoBehaviour
     private string userID = "None";
     private string userName = "None";
 
-    // Start is called before the first frame update
     void Start()
     {
         UpdateUserInfoText();
