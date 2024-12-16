@@ -65,11 +65,14 @@ namespace Complete
             if (newState == Complete.GameManager.GameState.RoundPlaying)
             {
                 // ゲームがプレイ中なら、SpawnRoutineを開始
-                if (m_SpawnRoutine == null)
+                if (m_SpawnRoutine == null && cartridgeDataArray != null)
                 {
                     foreach (var cartridgeData in cartridgeDataArray)
                     {
-                        m_SpawnRoutine = StartCoroutine(SpawnRoutine(cartridgeData));
+                        if (cartridgeData != null && cartridgeData.cartridgePrefab != null)
+                        {
+                            m_SpawnRoutine = StartCoroutine(SpawnRoutine(cartridgeData));
+                        }
                     }
                 }
             }

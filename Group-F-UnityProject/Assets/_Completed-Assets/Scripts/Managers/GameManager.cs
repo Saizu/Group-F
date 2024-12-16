@@ -33,6 +33,8 @@ namespace Complete
         
         private void Start()
         {
+            AppState.CurrentPage = "Game";
+            Debug.Log($"Current Page: {AppState.CurrentPage}");
             // Create the delays so they only have to be made once.
             m_StartWait = new WaitForSeconds (m_StartDelay);
             m_EndWait = new WaitForSeconds (m_EndDelay);
@@ -83,14 +85,27 @@ namespace Complete
             m_CameraControl.m_Targets = targets;
         }
 
-        private void SetGameState(GameState newState){ //ゲームの状態を更新
-            if (CurrentGameState == newState)
-                return;
+        private void SetGameState(GameState newState)
+{
+    // 現在の状態と新しい状態が同じ場合は何もしない
+    if (CurrentGameState == newState)
+        return;
 
-            CurrentGameState = newState;
-            GameStateChanged?.Invoke(newState);
+    CurrentGameState = newState;
+
+    // GameStateChangedイベントが登録されているかを確認してから呼び出す
+    if (GameStateChanged != null)
+    {
+        try
+        {
+            GameStateChanged.Invoke(newState);
         }
-
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error invoking GameStateChanged: {e.Message}");
+        }
+    }
+}
         // This is called from start and will run each phase of the game one after another.
         private IEnumerator GameLoop ()
         {
