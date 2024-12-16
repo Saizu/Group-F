@@ -34,10 +34,6 @@ public class PlayerStockArea : MonoBehaviour
         sizeDelta.x = newWidth;
         hpBar.GetComponent<RectTransform>().sizeDelta = sizeDelta;
         // HPの残量によってHPバーの色を変更する
-        if (hpBarImage == null)
-        {
-            return;
-        }
         if (rate > 0.5f)
         {
             hpBarImage.color = Color.green; // 緑色

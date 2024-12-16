@@ -16,34 +16,34 @@ namespace Complete
         public GameObject m_TankPrefab;             // Reference to the prefab the players will control.
         public TankManager[] m_Tanks;               // A collection of managers for enabling and disabling different aspects of the tanks.
 
-
+        
         private int m_RoundNumber;                  // Which round the game is currently on.
         private WaitForSeconds m_StartWait;         // Used to have a delay whilst the round starts.
         private WaitForSeconds m_EndWait;           // Used to have a delay whilst the round or game ends.
         private TankManager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won.
         private TankManager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won.
-
-        public enum GameState
-        {
+        public enum GameState{
             //ゲームの開始処理中、ゲームのプレイ中、ゲームの終了処理中
-            RoundStarting, RoundPlaying, RoundEnding
+            RoundStarting,RoundPlaying,RoundEnding
         }
 
         public GameState CurrentGameState { get; private set; } //現在のゲームの状態を保持する変数
         public delegate void OnGameStateChanged(GameState newGameState); //新しい状態の通知を行うイベント
         internal Action<Complete.GameManager.GameState> GameStateChanged;
-
+        
         private void Start()
         {
+            AppState.CurrentPage = "Game";
+            Debug.Log($"Current Page: {AppState.CurrentPage}");
             // Create the delays so they only have to be made once.
-            m_StartWait = new WaitForSeconds(m_StartDelay);
-            m_EndWait = new WaitForSeconds(m_EndDelay);
+            m_StartWait = new WaitForSeconds (m_StartDelay);
+            m_EndWait = new WaitForSeconds (m_EndDelay);
 
             SpawnAllTanks();
             SetCameraTargets();
 
             // Once the tanks have been created and the camera is using them as targets, start the game.
-            StartCoroutine(GameLoop());
+            StartCoroutine (GameLoop ());
         }
 
 
@@ -78,50 +78,62 @@ namespace Complete
         }
 
         private void SetGameState(GameState newState)
-        { //ゲームの状態を更新
-            if (CurrentGameState == newState)
-                return;
+{
+    // 現在の状態と新しい状態が同じ場合は何もしない
+    if (CurrentGameState == newState)
+        return;
 
-            CurrentGameState = newState;
-            GameStateChanged?.Invoke(newState);
+    CurrentGameState = newState;
+
+    // GameStateChangedイベントが登録されているかを確認してから呼び出す
+    if (GameStateChanged != null)
+    {
+        try
+        {
+            GameStateChanged.Invoke(newState);
         }
-
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error invoking GameStateChanged: {e.Message}");
+        }
+    }
+}
         // This is called from start and will run each phase of the game one after another.
-        private IEnumerator GameLoop()
+        private IEnumerator GameLoop ()
         {
             // Start off by running the 'RoundStarting' coroutine but don't return until it's finished.
-            yield return StartCoroutine(RoundStarting());
+            yield return StartCoroutine (RoundStarting ());
 
             // Once the 'RoundStarting' coroutine is finished, run the 'RoundPlaying' coroutine but don't return until it's finished.
-            yield return StartCoroutine(RoundPlaying());
+            yield return StartCoroutine (RoundPlaying());
 
             // Once execution has returned here, run the 'RoundEnding' coroutine, again don't return until it's finished.
-            yield return StartCoroutine(RoundEnding());
+            yield return StartCoroutine (RoundEnding());
 
             // This code is not run until 'RoundEnding' has finished.  At which point, check if a game winner has been found.
             if (m_GameWinner != null)
             {
                 // ホーム画面に遷移。
-                SceneManager.LoadScene("HomeScene");
+                SceneManager.LoadScene ("HomeScene");
             }
             else
             {
                 // If there isn't a winner yet, restart this coroutine so the loop continues.
                 // Note that this coroutine doesn't yield.  This means that the current version of the GameLoop will end.
-                StartCoroutine(GameLoop());
+                StartCoroutine (GameLoop ());
             }
         }
 
 
-        private IEnumerator RoundStarting()
+        private IEnumerator RoundStarting ()
         {
             SetGameState(GameState.RoundStarting);
             // As soon as the round starts reset the tanks and make sure they can't move.
-            ResetAllTanks();
-            DisableTankControl();
+            ResetAllTanks ();
+            DisableTankControl ();
 
             // Snap the camera's zoom and position to something appropriate for the reset tanks.
-            m_CameraControl.SetStartPositionAndSize();
+            m_CameraControl.SetStartPositionAndSize ();
 
             // Increment the round number and display text showing the players what round it is.
             m_RoundNumber++;
@@ -132,11 +144,11 @@ namespace Complete
         }
 
 
-        private IEnumerator RoundPlaying()
+        private IEnumerator RoundPlaying ()
         {
             SetGameState(GameState.RoundPlaying);
             // As soon as the round begins playing let the players control the tanks.
-            EnableTankControl();
+            EnableTankControl ();
 
             // Clear the text from the screen.
             m_MessageText.text = string.Empty;
@@ -150,17 +162,17 @@ namespace Complete
         }
 
 
-        private IEnumerator RoundEnding()
+        private IEnumerator RoundEnding ()
         {
             SetGameState(GameState.RoundEnding);
             // Stop tanks from moving.
-            DisableTankControl();
+            DisableTankControl ();
 
             // Clear the winner from the previous round.
             m_RoundWinner = null;
 
             // See if there is a winner now the round is over.
-            m_RoundWinner = GetRoundWinner();
+            m_RoundWinner = GetRoundWinner ();
 
             // 戦車にラウンドの終了を知らせる。
             foreach (var tank in m_Tanks)
@@ -169,10 +181,10 @@ namespace Complete
             }
 
             // Now the winner's score has been incremented, see if someone has one the game.
-            m_GameWinner = GetGameWinner();
+            m_GameWinner = GetGameWinner ();
 
             // Get a message based on the scores and whether or not there is a game winner and display it.
-            string message = EndMessage();
+            string message = EndMessage ();
             m_MessageText.text = message;
 
             // Wait for the specified length of time until yielding control back to the game loop.
@@ -197,8 +209,8 @@ namespace Complete
             // If there are one or fewer tanks remaining return true, otherwise return false.
             return numTanksLeft <= 1;
         }
-
-
+        
+        
         // This function is to find out if there is a winner of the round.
         // This function is called with the assumption that 1 or fewer tanks are currently active.
         private TankManager GetRoundWinner()
