@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -51,6 +52,12 @@ public class MainMenuManager : MonoBehaviour
         // メインメニューを非表示にして、ゲーム画面を表示
         mainMenuPage.SetActive(false);
         gamePage.SetActive(true);
+    }
+
+    // ロビーシーンへ移動するボタン (Versus Player)
+    public void OnVersusPlayerButtonClicked()
+    {
+        SceneManager.LoadScene("LobbyScene");
     }
 
     // ゲームを終了するボタン
