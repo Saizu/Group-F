@@ -15,7 +15,7 @@ public class UserNameChangeDialog : MonoBehaviour
         if (userManager.SetUserName(newName))
         {
             feedbackText.text = "名前が変更されました: " + newName;
-            this.gameObject.SetActive(false);
+            this.gameObject.SetActive(false); // ダイアログを閉じる
         }
         else
         {
