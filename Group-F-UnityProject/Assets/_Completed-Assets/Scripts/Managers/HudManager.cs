@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Complete;
 
 namespace Complete
@@ -11,6 +12,15 @@ namespace Complete
         [SerializeField] private PlayerStockArea player2StockArea; // Player2のストック表示
         [SerializeField] private GameObject hudCanvas;            // HUD全体を管理するCanvas
         [SerializeField] private GameManager gameManager;         // GameManagerへの参照
+
+        private void Start()
+        {
+            // 現在のシーンがホーム画面（Scenes/HomeScreen）の場合、HUDを無効化
+            if (SceneManager.GetActiveScene().name == "Scenes/HomeScreen")
+            {
+                gameObject.SetActive(false); // HUD全体を非表示
+            }
+        }
 
         private void OnEnable()
         {

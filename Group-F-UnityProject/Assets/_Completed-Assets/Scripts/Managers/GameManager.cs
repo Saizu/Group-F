@@ -41,7 +41,15 @@ namespace Complete
             SetCameraTargets();
 
             // Once the tanks have been created and the camera is using them as targets, start the game.
-            StartCoroutine (GameLoop ());
+            // ホーム画面から正しいトリガーが来たときのみゲームループを開始
+            if (SceneManager.GetActiveScene().name == "_Complete-Game")
+            {
+                StartCoroutine(GameLoop());
+            }
+            else
+            {
+                Debug.Log("ゲームループはこのシーンでは実行されません: " + SceneManager.GetActiveScene().name);
+            }        
         }
 
 
