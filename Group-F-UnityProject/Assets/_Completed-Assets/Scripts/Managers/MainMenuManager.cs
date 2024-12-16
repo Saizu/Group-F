@@ -6,6 +6,8 @@ public class MainMenuManager : MonoBehaviour
 {
     public GameObject itemPage; // アイテム表示画面
     public GameObject gamePage; // ゲーム画面
+    public GameObject infoPage; // お知らせ画面
+    public GameObject inqPage; // お問い合わせ画面
     public TMP_Text staminaText;
     public GameObject mainMenuPage; // メインメニュー画面
 
@@ -51,6 +53,24 @@ public class MainMenuManager : MonoBehaviour
         // メインメニューを非表示にして、ゲーム画面を表示
         mainMenuPage.SetActive(false);
         gamePage.SetActive(true);
+    }
+
+    /// お知らせ画面へ移動するボタンがクリックされたときに呼ばれるメソッド
+    ///
+    /// メインメニューを非表示にして、お知らせ画面を表示する。
+    public void OnInformationButtonClicked()
+    {
+        mainMenuPage.SetActive(false);
+        infoPage.SetActive(true);
+    }
+
+    /// お知らせ画面へ移動するボタンがクリックされたときに呼ばれるメソッド
+    ///
+    /// メインメニューを非表示にして、お知らせ画面を表示する。
+    public void OnContactUsButtonClicked()
+    {
+        mainMenuPage.SetActive(false);
+        inqPage.SetActive(true);
     }
 
     // ゲームを終了するボタン
