@@ -19,7 +19,7 @@ public class UserHeaderUI : MonoBehaviour
         if (userManager != null)
         {
             userIdText.text = "User ID: " + (userManager.UserId ?? "None");
-            userNameText.text = "User Name: " + (userManager.UserName ?? "None");
+            userNameText.text = "User Name: " + (userManager.UserName ?? "NoName");
         }
     }
 }

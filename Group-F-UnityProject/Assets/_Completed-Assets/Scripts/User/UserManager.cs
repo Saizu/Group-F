@@ -10,10 +10,26 @@ public class UserManager : MonoBehaviour
     public string UserId { get; private set; }
     public string UserName { get; private set; }
 
+    void Awake()
+    {
+        if (FindObjectsOfType<UserManager>().Length > 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
     void Start()
     {
         // ロード
         LoadUser();
+    }
+
+    // 画面遷移の時にユーザー情報をロードし、ゲーム内で表示させるようにする
+    private void OnEnable()
+    {
+        LoadUser(); // PlayerPrefs からユーザー情報をリロード
     }
 
     // 新規ユーザー作成
@@ -63,7 +79,7 @@ public class UserManager : MonoBehaviour
 
         return false;
     }
-    
+
     // ユーザー名の検証
     private bool ValidateUserName(string name)
     {
@@ -81,16 +97,12 @@ public class UserManager : MonoBehaviour
         return true;
     }
 
-    void Awake()
+    public void ResetUser()
     {
-        // UserManagerが複数生成されないようにする
-        if (FindObjectsOfType<UserManager>().Length > 1)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        DontDestroyOnLoad(gameObject);
+        PlayerPrefs.DeleteKey(UserIdKey);
+        PlayerPrefs.DeleteKey(UserNameKey);
+        PlayerPrefs.Save();
+        UserId = null;
+        UserName = "NoName";
     }
-
 }
