@@ -10,6 +10,7 @@ public class UserHeaderUI : MonoBehaviour
 
     void Start()
     {
+        userManager = FindObjectOfType<UserManager>();
         UpdateUserInfo();
     }
 

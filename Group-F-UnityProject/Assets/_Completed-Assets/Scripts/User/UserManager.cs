@@ -20,11 +20,6 @@ public class UserManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
     }
-    void Start()
-    {
-        // ロード
-        LoadUser();
-    }
 
     // 画面遷移の時にユーザー情報をロードし、ゲーム内で表示させるようにする
     private void OnEnable()
