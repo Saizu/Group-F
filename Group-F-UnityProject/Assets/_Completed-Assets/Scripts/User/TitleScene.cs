@@ -2,20 +2,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TitleScreen : MonoBehaviour
+public class TitleScene : MonoBehaviour
 {
-    public UserManager userManager; 
-    public TMPro.TextMeshProUGUI userIdText; 
+    public UserManager userManager;
+    public TMPro.TextMeshProUGUI userIdText;
 
     void Start()
     {
         if (userManager.IsUserCreated())
         {
-            userIdText.text = "User ID: " + userManager.UserId; 
+            userIdText.text = "User ID: " + userManager.UserId;
         }
         else
         {
-            userIdText.text = ""; 
+            userIdText.text = "First Login";
         }
     }
 
@@ -24,9 +24,9 @@ public class TitleScreen : MonoBehaviour
     {
         if (!userManager.IsUserCreated())
         {
-            userManager.CreateUser(); 
+            userManager.CreateUser();
         }
 
-        SceneManager.LoadScene("Scenes/HomeScreen"); 
+        SceneManager.LoadScene("Scenes/HomeScene");
     }
 }

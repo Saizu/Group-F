@@ -1,3 +1,4 @@
+// デバッグ用　実際には使わない
 using UnityEngine;
 
 public class UserExample : MonoBehaviour
@@ -6,7 +7,6 @@ public class UserExample : MonoBehaviour
 
     void Start()
     {
-        // 値を動的に設定
         userInfoDisplay.SetUserInfo("12345", "Taro Yamada");
     }
 }
