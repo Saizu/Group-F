@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TitleScreen : MonoBehaviour
+public class TitleScene : MonoBehaviour
 {
     public UserManager userManager; 
     public TMPro.TextMeshProUGUI userIdText; 
@@ -27,6 +27,6 @@ public class TitleScreen : MonoBehaviour
             userManager.CreateUser(); 
         }
 
-        SceneManager.LoadScene("MainGame"); 
+        SceneManager.LoadScene(""); 
     }
 }
