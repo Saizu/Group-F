@@ -27,6 +27,6 @@ public class TitleScreen : MonoBehaviour
             userManager.CreateUser(); 
         }
 
-        SceneManager.LoadScene("MainGame"); 
+        SceneManager.LoadScene("Scenes/HomeScreen"); 
     }
 }
