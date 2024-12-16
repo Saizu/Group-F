@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Group-F-UnityProject/Assets/Server.meta
+guid: c21f54214f487904a818232defbd1f40
+folderAsset: yes
+========
 guid: 4ecaaedfb2c4749c8bd67604bfe3046e
+>>>>>>>> main:Group-F-UnityProject/Assets/Scenes/HomeScene.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
