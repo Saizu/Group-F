@@ -6,7 +6,7 @@ public class UserInfoDisplay : MonoBehaviour
     [SerializeField] private TMP_Text userInfoText;
 
     private string userID = "None";
-    private string userName = "None";
+    private string userName = "NoName";
 
     // Start is called before the first frame update
     void Start()

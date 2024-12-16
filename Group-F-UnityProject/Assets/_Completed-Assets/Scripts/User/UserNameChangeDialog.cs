@@ -1,12 +1,12 @@
-// ユーザー名変更のUI
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class UserNameChangeDialog : MonoBehaviour
 {
-    public UserManager userManager;
-    public TMPro.TMP_InputField nameInputField;
-    public TMPro.TextMeshProUGUI feedbackText;
+    public UserManager userManager; // ユーザー情報を管理
+    public TMPro.TMP_InputField nameInputField; // ユーザー名入力フィールド
+    public TMPro.TextMeshProUGUI feedbackText; // フィードバック表示
+    public UserHeaderUI userHeaderUI; // ユーザー情報UI更新用
 
     public void OnChangeButtonClicked()
     {
@@ -14,12 +14,14 @@ public class UserNameChangeDialog : MonoBehaviour
 
         if (userManager.SetUserName(newName))
         {
-            feedbackText.text = "名前が変更されました: " + newName;
-            this.gameObject.SetActive(false); // ダイアログを閉じる
+            // 成功時のフィードバックとUI更新
+            feedbackText.text = $"The name has been changed: {newName}";
+            userHeaderUI.UpdateUserInfo();
         }
         else
         {
-            feedbackText.text = "無効な名前です。3〜15文字で記号を含めないでください。";
+            // エラーメッセージを表示
+            feedbackText.text = "Failed to set the name. Please use 3 to 15 characters without special symbols.";
         }
     }
 }

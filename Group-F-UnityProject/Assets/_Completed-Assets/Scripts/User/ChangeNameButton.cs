@@ -8,11 +8,9 @@ public class ChangeNameButton : MonoBehaviour
     {
         if (changeUserNameDialog != null)
         {
-            changeUserNameDialog.SetActive(true); // ダイアログを表示
-        }
-        else
-        {
-            Debug.LogError("ChangeUserNameDialog is not assigned!");
+            // 現在のアクティブ状態を反転させる
+            bool isActive = changeUserNameDialog.activeSelf;
+            changeUserNameDialog.SetActive(!isActive);
         }
     }
 }

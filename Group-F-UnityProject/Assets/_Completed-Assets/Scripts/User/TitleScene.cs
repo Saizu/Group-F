@@ -15,7 +15,7 @@ public class TitleScene : MonoBehaviour
         }
         else
         {
-            userIdText.text = ""; 
+            userIdText.text = "NoName"; 
         }
     }
 
@@ -26,7 +26,9 @@ public class TitleScene : MonoBehaviour
         {
             userManager.CreateUser(); 
         }
+        // ユーザーIDを更新
+        userIdText.text = "User ID: " + userManager.UserId; 
 
-        SceneManager.LoadScene(""); 
+        SceneManager.LoadScene("HomeScene"); 
     }
 }
